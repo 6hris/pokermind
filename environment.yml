@@ -1,0 +1,24 @@
+name: poker_mind
+channels:
+  - pytorch
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.10
+  - pip
+  - jupyter
+  - notebook
+  - pandas
+  - numpy
+  - tqdm
+  - requests
+  - matplotlib
+  - seaborn
+  - pytorch
+  - huggingface::datasets
+  - pip:
+    - openai
+    - transformers
+    - accelerate
+    - together
+    - python-dotenv
