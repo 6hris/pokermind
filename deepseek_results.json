@@ -1,0 +1,1602 @@
+[
+    {
+        "Index": 0,
+        "Response": "fold"
+    },
+    {
+        "Index": 1,
+        "Response": "Call 37 chips."
+    },
+    {
+        "Index": 2,
+        "Response": "fold"
+    },
+    {
+        "Index": 3,
+        "Response": "fold"
+    },
+    {
+        "Index": 4,
+        "Response": "bet"
+    },
+    {
+        "Index": 5,
+        "Response": "fold"
+    },
+    {
+        "Index": 6,
+        "Response": "Fold"
+    },
+    {
+        "Index": 7,
+        "Response": "call"
+    },
+    {
+        "Index": 8,
+        "Response": "call"
+    },
+    {
+        "Index": 9,
+        "Response": "fold"
+    },
+    {
+        "Index": 10,
+        "Response": "The optimal action is: Call 17 chips."
+    },
+    {
+        "Index": 11,
+        "Response": "fold\n\nfold"
+    },
+    {
+        "Index": 12,
+        "Response": "fold"
+    },
+    {
+        "Index": 13,
+        "Response": "fold"
+    },
+    {
+        "Index": 14,
+        "Response": "Your optimal action is: bet 34 chips"
+    },
+    {
+        "Index": 15,
+        "Response": "Call"
+    },
+    {
+        "Index": 16,
+        "Response": "The optimal action is to check.\n\nYour hand, Q\u2665 and J\u2666, on the flop of A\u2663, K\u2660, 7\u2666, gives you a weak draw. The BB showed strength by calling a raise on the flop and then checking on the turn, which is ambiguous but potentially traps. Checking allows you to see if the BB bet and assess further action.\n\nCheck.\n\nYour optimal action is: check"
+    },
+    {
+        "Index": 17,
+        "Response": "fold"
+    },
+    {
+        "Index": 18,
+        "Response": "Your optimal action is: check"
+    },
+    {
+        "Index": 19,
+        "Response": "Fold"
+    },
+    {
+        "Index": 20,
+        "Response": "The optimal action is to make a bet. You bet 8 chips.\n\n**Action: Bet 8 chips.**\n\n---\n\nFinal Answer: \n\\boxed{8}"
+    },
+    {
+        "Index": 21,
+        "Response": "fold"
+    },
+    {
+        "Index": 22,
+        "Response": "call"
+    },
+    {
+        "Index": 23,
+        "Response": "fold"
+    },
+    {
+        "Index": 24,
+        "Response": "bet 14.0 chips"
+    },
+    {
+        "Index": 25,
+        "Response": "The optimal action is to fold.\n\nYour action is: Fold."
+    },
+    {
+        "Index": 26,
+        "Response": "The optimal action is to bet 12 chips."
+    },
+    {
+        "Index": 27,
+        "Response": "fold"
+    },
+    {
+        "Index": 28,
+        "Response": "Your optimal action is: fold"
+    },
+    {
+        "Index": 29,
+        "Response": "The optimal action is: **call**"
+    },
+    {
+        "Index": 30,
+        "Response": "bet 21"
+    },
+    {
+        "Index": 31,
+        "Response": "call"
+    },
+    {
+        "Index": 32,
+        "Response": "The optimal action is to raise."
+    },
+    {
+        "Index": 33,
+        "Response": "Your optimal action is: bet 7 chips."
+    },
+    {
+        "Index": 34,
+        "Response": "call"
+    },
+    {
+        "Index": 35,
+        "Response": "fold"
+    },
+    {
+        "Index": 36,
+        "Response": "Fold.\n\nYour optimal action is: fold\n\nFold\n\nFold\n\nfold\n\nfold\n\nfold\n\nfold\n\nfold\n\nfold\n\nfold\n\nfold\n\nfold\n\nfold\n\nfold\n\nfold\n\nfold\n\nfold\n\nfold\n\nfold\n\nfold\n\nfold\n\nfold\n\nfold\n\nfold\n\nfold\n\nfold\n\nfold\n\nfold\n\nfold\n\nfold\n\nfold\n\nfold\n\nfold\n\nfold\n\nfold\n\nfold\n\nfold\n\nfold\n\nfold\n\nfold\n\nfold\n\nfold\n\nfold\n\nfold\n\nfold\n\nfold\n\nfold\n\nfold\n\nfold\n\nfold\n\nfold\n\nfold\n\nfold\n\nfold\n\nfold\n\nfold\n\nfold\n\nfold\n\nfold\n\nfold\n\nfold\n\nfold\n\nfold\n\nfold\n\nfold\n\nfold\n\nfold\n\nfold\n\nfold\n\nfold\n\nfold\n\nfold\n\nfold\n\nfold\n\nfold\n\nfold\n\nfold\n\nfold\n\nfold\n\nfold\n\nfold\n\nfold\n\nfold\n\nfold\n\nfold\n\nfold\n\nfold\n\nfold\n\nfold\n\nfold\n\nfold\n\nfold\n\nfold\n\nfold\n\nfold\n\nfold\n\nfold\n\nfold\n\nfold\n\nfold\n\nfold\n\nfold\n\nfold\n\nfold\n\nfold\n\nfold\n\nfold\n\nfold\n\nfold\n\nfold\n\nfold\n\nfold\n\nfold\n\nfold\n\nfold\n\nfold\n\nfold\n\nfold\n\nfold\n\nfold\n\nfold\n\nfold\n\nfold\n\nfold\n\nfold\n\nfold\n\nfold\n\nfold\n\nfold\n\nfold\n\nfold\n\nfold"
+    },
+    {
+        "Index": 37,
+        "Response": "fold"
+    },
+    {
+        "Index": 38,
+        "Response": "Fold"
+    },
+    {
+        "Index": 39,
+        "Response": "bet"
+    },
+    {
+        "Index": 40,
+        "Response": "check"
+    },
+    {
+        "Index": 41,
+        "Response": "call"
+    },
+    {
+        "Index": 42,
+        "Response": "check"
+    },
+    {
+        "Index": 43,
+        "Response": "Fold"
+    },
+    {
+        "Index": 44,
+        "Response": "To decide the optimal action at the river, analyzing the possible hands of the BB against my flush is crucial. Considering the line of play and potential ranges, betting for value with a flush is the move.\n\n**Final Answer:** bet"
+    },
+    {
+        "Index": 45,
+        "Response": "The optimal action is to call."
+    },
+    {
+        "Index": 46,
+        "Response": "Call"
+    },
+    {
+        "Index": 47,
+        "Response": "BET"
+    },
+    {
+        "Index": 48,
+        "Response": "Your optimal action is: All-In"
+    },
+    {
+        "Index": 49,
+        "Response": "fold"
+    },
+    {
+        "Index": 50,
+        "Response": "Your optimal action is: Fold"
+    },
+    {
+        "Index": 51,
+        "Response": "Fold"
+    },
+    {
+        "Index": 52,
+        "Response": "fold"
+    },
+    {
+        "Index": 53,
+        "Response": "Fold."
+    },
+    {
+        "Index": 54,
+        "Response": "Your decision to make is based on the current situation, the strength of your hand, and the opponent's possible holdings. Here's the optimal action:\n\n**Action:** bet\n\nThe decision to bet on the river, given the board and the opponent's previous actions, is designed to extract value from weaker hands that might be bluffing or calling with worse holdings, while still maintaining a line that can represent strength."
+    },
+    {
+        "Index": 55,
+        "Response": "fold"
+    },
+    {
+        "Index": 56,
+        "Response": "The optimal action is to fold.\n\n**Step-by-Step Explanation:**\n\n1. **Hand Strength:**\n   - Holding K\u2660 and J\u2663 with a board of 9\u2660,7\u2660,4\u2663,6\u2660.\n   - Has a flush draw with four spades in total.\n   - High card is King, but board lacks pairs or straights pointing higher.\n\n2. **Pot Odds Analysis:**\n   - Current pot size is 148 chips; BB's raise to 81 chips.\n   - Pot odds: 148/81 \u2248 1.82:1.\n   - Approximate equity from flush draw: ~18.75%.\n\n3. **Equity vs Pot Odds:**\n   - Equity needed to justify call: ~35.5%.\n   - Actual equity (flush draw) is ~18.75%, below required threshold.\n\n4. **Opponent's Action:**\n   - BB raised on the turn, indicating a strong hand or bluff.\n   -xbb's betting patterns suggest possible value hand (set, flush) or bluff against the draw.\n\n5. **Conclusion:**\n   - Insufficient equity to meet pot odds.\n   - Folding avoids committing chips to a likely losing proposition.\n\n**Action:** Fold.\n\n**Answer:** Fold"
+    },
+    {
+        "Index": 57,
+        "Response": "check"
+    },
+    {
+        "Index": 58,
+        "Response": "call"
+    },
+    {
+        "Index": 59,
+        "Response": "fold"
+    },
+    {
+        "Index": 60,
+        "Response": "fold"
+    },
+    {
+        "Index": 61,
+        "Response": "Your optimal action is: check.\n\n**Answer:** Check"
+    },
+    {
+        "Index": 62,
+        "Response": "Your optimal action is: Bet 14 chips."
+    },
+    {
+        "Index": 63,
+        "Response": "fold"
+    },
+    {
+        "Index": 64,
+        "Response": "Fold"
+    },
+    {
+        "Index": 65,
+        "Response": "To check.\n\nYour optimal action is: check"
+    },
+    {
+        "Index": 66,
+        "Response": "fold"
+    },
+    {
+        "Index": 67,
+        "Response": "fold"
+    },
+    {
+        "Index": 68,
+        "Response": "Your optimal action is: fold"
+    },
+    {
+        "Index": 69,
+        "Response": "bet"
+    },
+    {
+        "Index": 70,
+        "Response": "call"
+    },
+    {
+        "Index": 71,
+        "Response": "fold"
+    },
+    {
+        "Index": 72,
+        "Response": "bet"
+    },
+    {
+        "Index": 73,
+        "Response": "call"
+    },
+    {
+        "Index": 74,
+        "Response": "fold"
+    },
+    {
+        "Index": 75,
+        "Response": "call"
+    },
+    {
+        "Index": 76,
+        "Response": "The optimal action is to fold."
+    },
+    {
+        "Index": 77,
+        "Response": "Fold"
+    },
+    {
+        "Index": 78,
+        "Response": "check"
+    },
+    {
+        "Index": 79,
+        "Response": "Fold"
+    },
+    {
+        "Index": 80,
+        "Response": "Check."
+    },
+    {
+        "Index": 81,
+        "Response": "fold"
+    },
+    {
+        "Index": 82,
+        "Response": ".fold"
+    },
+    {
+        "Index": 83,
+        "Response": "fold"
+    },
+    {
+        "Index": 84,
+        "Response": "fold"
+    },
+    {
+        "Index": 85,
+        "Response": "check"
+    },
+    {
+        "Index": 86,
+        "Response": "fold"
+    },
+    {
+        "Index": 87,
+        "Response": "fold"
+    },
+    {
+        "Index": 88,
+        "Response": "your action: check"
+    },
+    {
+        "Index": 89,
+        "Response": "fold"
+    },
+    {
+        "Index": 90,
+        "Response": "To make the optimal decision in this situation, I considered the strength of my hand, my position, and the opponent's action. As the big blind with A-8 off-suit and facing a call from the small blind, I decided to make a bet to protect my hand and potentially bluff weaker hands. This also allows me to gain value from worse hands that might call.\n\n**Your optimal action is:** bet."
+    },
+    {
+        "Index": 91,
+        "Response": "Your optimal action is: bet 20 chips."
+    },
+    {
+        "Index": 92,
+        "Response": "call"
+    },
+    {
+        "Index": 93,
+        "Response": "The optimal action is to bet 14 chips into the pot."
+    },
+    {
+        "Index": 94,
+        "Response": "FOLD"
+    },
+    {
+        "Index": 95,
+        "Response": "Fold"
+    },
+    {
+        "Index": 96,
+        "Response": "fold"
+    },
+    {
+        "Index": 97,
+        "Response": "Check"
+    },
+    {
+        "Index": 98,
+        "Response": null
+    },
+    {
+        "Index": 99,
+        "Response": "fold\n\nThe optimal action is to fold."
+    },
+    {
+        "Index": 100,
+        "Response": "The optimal action is: bet 4.0 chips."
+    },
+    {
+        "Index": 101,
+        "Response": "fold"
+    },
+    {
+        "Index": 102,
+        "Response": "fold"
+    },
+    {
+        "Index": 103,
+        "Response": "Fold"
+    },
+    {
+        "Index": 104,
+        "Response": "fold"
+    },
+    {
+        "Index": 105,
+        "Response": "The optimal action is to call.\n\n**Answer**: Call"
+    },
+    {
+        "Index": 106,
+        "Response": "fold"
+    },
+    {
+        "Index": 107,
+        "Response": "bet 23 chips"
+    },
+    {
+        "Index": 108,
+        "Response": null
+    },
+    {
+        "Index": 109,
+        "Response": "I decide to bet 12 chips to value bluff, protecting my hand and considering the risk of a flush.\n\nYour optimal action is: bet 12 chips."
+    },
+    {
+        "Index": 110,
+        "Response": "fold"
+    },
+    {
+        "Index": 111,
+        "Response": "fold"
+    },
+    {
+        "Index": 112,
+        "Response": "fold"
+    },
+    {
+        "Index": 113,
+        "Response": "fold"
+    },
+    {
+        "Index": 114,
+        "Response": "The optimal action is to **raise** (3bet) to increase the pot value with a strong hand while controlling the action post-flop.\n\nYour optimal action is: **raise to 5 chips.**\n\n raiseto5"
+    },
+    {
+        "Index": 115,
+        "Response": "Fold"
+    },
+    {
+        "Index": 116,
+        "Response": "FOLD"
+    },
+    {
+        "Index": 117,
+        "Response": "fold"
+    },
+    {
+        "Index": 118,
+        "Response": "fold"
+    },
+    {
+        "Index": 119,
+        "Response": "Your optimal action is to **bet 22 chips**.  \n\nReasoning: With a Queen and Ten of Clubs, you have a flush draw entering the hand. The flop brought three clubs, giving you the opportunity to complete the flush on the turn or river. After the turn card (Nine of Diamonds), which doesn't complete your flush but gives another backdoor draw, your bet of 18 chips was met with a call. On the river, with the board complete, you need to extract value from any remaining hands that might have been bluffing or light value. Betting now is optimal to maximize potential gain."
+    },
+    {
+        "Index": 120,
+        "Response": "fold"
+    },
+    {
+        "Index": 121,
+        "Response": "call"
+    },
+    {
+        "Index": 122,
+        "Response": null
+    },
+    {
+        "Index": 123,
+        "Response": "Your optimal action is: fold"
+    },
+    {
+        "Index": 124,
+        "Response": "fold"
+    },
+    {
+        "Index": 125,
+        "Response": "fold"
+    },
+    {
+        "Index": 126,
+        "Response": "call"
+    },
+    {
+        "Index": 127,
+        "Response": "fold."
+    },
+    {
+        "Index": 128,
+        "Response": "Your optimal action is to fold."
+    },
+    {
+        "Index": 129,
+        "Response": "Your optimal action is: Fold"
+    },
+    {
+        "Index": 130,
+        "Response": "check"
+    },
+    {
+        "Index": 131,
+        "Response": null
+    },
+    {
+        "Index": 132,
+        "Response": "call"
+    },
+    {
+        "Index": 133,
+        "Response": "The optimal action is: Fold.\n\n```FOLD```"
+    },
+    {
+        "Index": 134,
+        "Response": "Your optimal action is: fold"
+    },
+    {
+        "Index": 135,
+        "Response": "fold"
+    },
+    {
+        "Index": 136,
+        "Response": "Your optimal action is to call.\n\nCall"
+    },
+    {
+        "Index": 137,
+        "Response": "fold"
+    },
+    {
+        "Index": 138,
+        "Response": "Check"
+    },
+    {
+        "Index": 139,
+        "Response": "Your action: Fold"
+    },
+    {
+        "Index": 140,
+        "Response": "The optimal action is: check"
+    },
+    {
+        "Index": 141,
+        "Response": "Your optimal action is: call"
+    },
+    {
+        "Index": 142,
+        "Response": "check"
+    },
+    {
+        "Index": 143,
+        "Response": "check"
+    },
+    {
+        "Index": 144,
+        "Response": "fold"
+    },
+    {
+        "Index": 145,
+        "Response": "FOLD"
+    },
+    {
+        "Index": 146,
+        "Response": "fold"
+    },
+    {
+        "Index": 147,
+        "Response": "fold"
+    },
+    {
+        "Index": 148,
+        "Response": "Your optimal action is: call"
+    },
+    {
+        "Index": 149,
+        "Response": "The optimal action is: fold.  \nfold"
+    },
+    {
+        "Index": 150,
+        "Response": "Your optimal action is: check"
+    },
+    {
+        "Index": 151,
+        "Response": "Fold"
+    },
+    {
+        "Index": 152,
+        "Response": "bet 2.0 chips"
+    },
+    {
+        "Index": 153,
+        "Response": "Call."
+    },
+    {
+        "Index": 154,
+        "Response": "bet"
+    },
+    {
+        "Index": 155,
+        "Response": "fold"
+    },
+    {
+        "Index": 156,
+        "Response": "fold"
+    },
+    {
+        "Index": 157,
+        "Response": "dig"
+    },
+    {
+        "Index": 158,
+        "Response": "fold\n\nThe optimal action is to fold."
+    },
+    {
+        "Index": 159,
+        "Response": "call"
+    },
+    {
+        "Index": 160,
+        "Response": "bet 20 chips"
+    },
+    {
+        "Index": 161,
+        "Response": "Your optimal action is: check."
+    },
+    {
+        "Index": 162,
+        "Response": "check"
+    },
+    {
+        "Index": 163,
+        "Response": "fold"
+    },
+    {
+        "Index": 164,
+        "Response": "fold"
+    },
+    {
+        "Index": 165,
+        "Response": "fold"
+    },
+    {
+        "Index": 166,
+        "Response": "fold"
+    },
+    {
+        "Index": 167,
+        "Response": "bet 18 chips"
+    },
+    {
+        "Index": 168,
+        "Response": "call"
+    },
+    {
+        "Index": 169,
+        "Response": "Your optimal action is: Check\n\nStep-by-step explanation:\n\n1. You're in the Big Blind position with Queen of Hearts and Ten of Spades.\n2. The SB called, indicating they might have a weak or medium hand.\n3. Your hand lacks strong value or bluffing potential.\n4. Checking allows you to see the flop cheaply.\n5. Future decisions can be made based on the community cards.\n\nAnswer: Check"
+    },
+    {
+        "Index": 170,
+        "Response": "The optimal action is to fold.\n\nfold"
+    },
+    {
+        "Index": 171,
+        "Response": "fold"
+    },
+    {
+        "Index": 172,
+        "Response": "fold"
+    },
+    {
+        "Index": 173,
+        "Response": "fold"
+    },
+    {
+        "Index": 174,
+        "Response": "fold"
+    },
+    {
+        "Index": 175,
+        "Response": "fold"
+    },
+    {
+        "Index": 176,
+        "Response": null
+    },
+    {
+        "Index": 177,
+        "Response": "bet"
+    },
+    {
+        "Index": 178,
+        "Response": "The optimal action is to bet. \n\n**Reasoning:**  \nYou hold a pair of Aces, a strong hand, but vulnerable to higher pairs or full houses. By betting, you can either get value from worse hands or bluff opponents off better hands. Being in position, betting allows you to exert control over the pot and protect your hand.\n\nYour action: Bet."
+    },
+    {
+        "Index": 179,
+        "Response": "I turn and bet 17.0 chips.\n\n---\n\n**Action:** Bet 17.0 chips."
+    },
+    {
+        "Index": 180,
+        "Response": "The optimal action is to **bet** 10 chips into the pot. \n\nThis is because your queen high is likely the best hand, and bettor position gives you the chance to extract value from SB's potentially weaker hands that were chased on the board."
+    },
+    {
+        "Index": 181,
+        "Response": "The optimal action is: call."
+    },
+    {
+        "Index": 182,
+        "Response": "fold"
+    },
+    {
+        "Index": 183,
+        "Response": "Fold"
+    },
+    {
+        "Index": 184,
+        "Response": null
+    },
+    {
+        "Index": 185,
+        "Response": "check"
+    },
+    {
+        "Index": 186,
+        "Response": "fold."
+    },
+    {
+        "Index": 187,
+        "Response": "FOLD"
+    },
+    {
+        "Index": 188,
+        "Response": "FOLD"
+    },
+    {
+        "Index": 189,
+        "Response": "fold"
+    },
+    {
+        "Index": 190,
+        "Response": "Your optimal action is: check"
+    },
+    {
+        "Index": 191,
+        "Response": "fold"
+    },
+    {
+        "Index": 192,
+        "Response": "fold"
+    },
+    {
+        "Index": 193,
+        "Response": "call"
+    },
+    {
+        "Index": 194,
+        "Response": "fold"
+    },
+    {
+        "Index": 195,
+        "Response": "bet"
+    },
+    {
+        "Index": 196,
+        "Response": "Your optimal action is: call 5 chips."
+    },
+    {
+        "Index": 197,
+        "Response": null
+    },
+    {
+        "Index": 198,
+        "Response": "fold"
+    },
+    {
+        "Index": 199,
+        "Response": null
+    },
+    {
+        "Index": 200,
+        "Response": "To make a move.\n\nThe optimal action is: bet."
+    },
+    {
+        "Index": 201,
+        "Response": "fold"
+    },
+    {
+        "Index": 202,
+        "Response": "Fold"
+    },
+    {
+        "Index": 203,
+        "Response": "check"
+    },
+    {
+        "Index": 204,
+        "Response": "fold"
+    },
+    {
+        "Index": 205,
+        "Response": "call"
+    },
+    {
+        "Index": 206,
+        "Response": "fold"
+    },
+    {
+        "Index": 207,
+        "Response": "bet 4"
+    },
+    {
+        "Index": 208,
+        "Response": "bet"
+    },
+    {
+        "Index": 209,
+        "Response": "fold"
+    },
+    {
+        "Index": 210,
+        "Response": "_bet 16 chips_\n\nMy action is to bet 16 chips."
+    },
+    {
+        "Index": 211,
+        "Response": "fold"
+    },
+    {
+        "Index": 212,
+        "Response": "fold"
+    },
+    {
+        "Index": 213,
+        "Response": "Your optimal action is: Raise to 4.0 chips."
+    },
+    {
+        "Index": 214,
+        "Response": "Fold"
+    },
+    {
+        "Index": 215,
+        "Response": "FOLD"
+    },
+    {
+        "Index": 216,
+        "Response": "bet"
+    },
+    {
+        "Index": 217,
+        "Response": "The optimal action is to bet."
+    },
+    {
+        "Index": 218,
+        "Response": "call"
+    },
+    {
+        "Index": 219,
+        "Response": "fold"
+    },
+    {
+        "Index": 220,
+        "Response": "Check"
+    },
+    {
+        "Index": 221,
+        "Response": "Your optimal action is to bet 73 chips.\n\n**Bet 73 chips.**"
+    },
+    {
+        "Index": 222,
+        "Response": "The optimal action is to bet."
+    },
+    {
+        "Index": 223,
+        "Response": "call 12 chips\n\n**Step-by-Step Explanation:**\n\n1. **Hand Review:** I have pocket kings (K\u2660 K\u2663), a strong starting hand.\n\n2. **Pre-Flop Action:** CO raised to 2.3, I reraised to 11.5, and CO called. Pot is 24 chips before flop.\n\n3. **Flop:** 6\u2660 8\u2666 7\u2663. This is a low to medium flop with possible draws.\n\n4. **Flop Action:** I checked, CO bet 12 into a pot of 36. BB has likely folded.\n\n5. **Decision Analysis:** With kings, I have the best pair. CO's bet could be for value (sets, straight, etc.) or a bluff. Given the board and my strong pair, I choose to call to see more cards.\n\n**Answer:** call 12 chips"
+    },
+    {
+        "Index": 224,
+        "Response": "The optimal action is to **bet**."
+    },
+    {
+        "Index": 225,
+        "Response": "fold"
+    },
+    {
+        "Index": 226,
+        "Response": "check"
+    },
+    {
+        "Index": 227,
+        "Response": "Fold\n\n**Step-by-Step Explanation:**\n\n1. **Hand Evaluation**: Holding A\u2660 J\u2663 on a board with T\u2665, 3\u2660, 2\u2666, A\u2663, Q\u2663. The best possible hand is a pair of Aces, but the board has multiple clubs, indicating a possible flush.\n\n2. **Pot Context**: The current pot is 130 chips, with significant bets and raises, especially on the river.\n\n3. **Opponent's Action**: BTN raised 84 chips on the river, which suggests a strong hand or a bluff, likely a club flush given the board texture.\n\n4. **Decision**: Considering the risk of a stronger hand (flush), folding is the optimal action to avoid losing more chips when the hand is vulnerable.\n\n**Answer:** Fold"
+    },
+    {
+        "Index": 228,
+        "Response": "call"
+    },
+    {
+        "Index": 229,
+        "Response": "call"
+    },
+    {
+        "Index": 230,
+        "Response": "check"
+    },
+    {
+        "Index": 231,
+        "Response": "Call."
+    },
+    {
+        "Index": 232,
+        "Response": "fold"
+    },
+    {
+        "Index": 233,
+        "Response": "Your optimal action is: bet."
+    },
+    {
+        "Index": 234,
+        "Response": "fold"
+    },
+    {
+        "Index": 235,
+        "Response": "Your optimal action is: raise 54 chips."
+    },
+    {
+        "Index": 236,
+        "Response": "bet 12 chips"
+    },
+    {
+        "Index": 237,
+        "Response": "Your optimal action is: call. \n\n**Answer:** Call"
+    },
+    {
+        "Index": 238,
+        "Response": "check\n\nYour optimal action is: **check**\n\nWait, no, after thinking through, perhaps the better play is to bet for value.\n\nYour optimal action is: **bet 6 chips**"
+    },
+    {
+        "Index": 239,
+        "Response": "fold"
+    },
+    {
+        "Index": 240,
+        "Response": "The optimal action is to call."
+    },
+    {
+        "Index": 241,
+        "Response": "bet\n\nThe optimal decision is to bet, as it protects your pair of kings and induces potential bluffs from your opponent who might be on a draw.\n\n**Your optimal action is: bet**"
+    },
+    {
+        "Index": 242,
+        "Response": "Your optimal action is: bet"
+    },
+    {
+        "Index": 243,
+        "Response": "Fold.\n\n**Step-by-Step Explanation:**\n\n1. **Pre-Flop Action:** SB raises to 3, BB (me) calls. The pot is built on these bets.\n2. **Flop:** Board shows 9\u2660,7\u2660,4\u2663. SB bets 5, BB raises to 16, SB calls. Pot grows significantly.\n3. **Turn:** 6\u2660. SB bets 29 into the current pot of 44, making the total 73.\n4. **Hand Analysis:** Holding Qh 5h, which doesn't connect well with the four spades on the board, no flush draw or straight possibility.\n5. **Opponent's Range:** SB's aggressive betting suggests he might have a made hand or a strong draw.\n6. **Decision:** Without strong hand strength, and facing a large bet, folding is optimal.\n\n**Answer:** Fold."
+    },
+    {
+        "Index": 244,
+        "Response": "call"
+    },
+    {
+        "Index": 245,
+        "Response": "bet"
+    },
+    {
+        "Index": 246,
+        "Response": "I bet 20 chips.\n\nbett humaneuristic_in=5"
+    },
+    {
+        "Index": 247,
+        "Response": "Call 15.0 chips."
+    },
+    {
+        "Index": 248,
+        "Response": "check"
+    },
+    {
+        "Index": 249,
+        "Response": "fold"
+    },
+    {
+        "Index": 250,
+        "Response": "bet"
+    },
+    {
+        "Index": 251,
+        "Response": "check"
+    },
+    {
+        "Index": 252,
+        "Response": "check"
+    },
+    {
+        "Index": 253,
+        "Response": "fold"
+    },
+    {
+        "Index": 254,
+        "Response": "FOLD"
+    },
+    {
+        "Index": 255,
+        "Response": "call"
+    },
+    {
+        "Index": 256,
+        "Response": "Call\n\nThe answer is to call the BB's raise on the river, considering the strength of the flush and potential bluff attempts. \n\nCall"
+    },
+    {
+        "Index": 257,
+        "Response": "Fold"
+    },
+    {
+        "Index": 258,
+        "Response": "bet 5"
+    },
+    {
+        "Index": 259,
+        "Response": "fold"
+    },
+    {
+        "Index": 260,
+        "Response": "Your optimal action is to call 30 chips.\n\n**Answer:** Call 30 chips."
+    },
+    {
+        "Index": 261,
+        "Response": "fold"
+    },
+    {
+        "Index": 262,
+        "Response": "fold"
+    },
+    {
+        "Index": 263,
+        "Response": "bet"
+    },
+    {
+        "Index": 264,
+        "Response": "call"
+    },
+    {
+        "Index": 265,
+        "Response": "fold"
+    },
+    {
+        "Index": 266,
+        "Response": "fold"
+    },
+    {
+        "Index": 267,
+        "Response": "call"
+    },
+    {
+        "Index": 268,
+        "Response": "fold"
+    },
+    {
+        "Index": 269,
+        "Response": "fold"
+    },
+    {
+        "Index": 270,
+        "Response": "fold"
+    },
+    {
+        "Index": 271,
+        "Response": "folded"
+    },
+    {
+        "Index": 272,
+        "Response": "Fold."
+    },
+    {
+        "Index": 273,
+        "Response": "Call\n\nCall\n\nThe optimal action is to call.\n\nFinal Answer:\n\nCall"
+    },
+    {
+        "Index": 274,
+        "Response": "The optimal action is to bet 14 chips.\n\n**Action:** Bet"
+    },
+    {
+        "Index": 275,
+        "Response": "call"
+    },
+    {
+        "Index": 276,
+        "Response": "call\n\nCall\n\ncall"
+    },
+    {
+        "Index": 277,
+        "Response": "fold"
+    },
+    {
+        "Index": 278,
+        "Response": "bet"
+    },
+    {
+        "Index": 279,
+        "Response": "At this point in the hand, considering the board, the action history, and the possible holdings of the Big Blind, the optimal decision is to continue the all-in bet and see what the Big Blind shows.\n\nYour action: Check."
+    },
+    {
+        "Index": 280,
+        "Response": "Check"
+    },
+    {
+        "Index": 281,
+        "Response": "Your optimal action is: Fold\n\n**Step-by-Step Explanation:**\n\n1. **Hand Review:**\n   - Holding: Pocket Tens (10\u2660, 10\u2663)\n   - Board: A\u2666, 8\u2666, 3\u2666, 9\u2666 (Four-flush)\n\n2. **Preflop Action:**\n   - UTG, HJ, CO, BTN, SB, BB.\n   - Position: CO.\n   - HJ raised to 2, you 3-bet to 6.5, HJ called.\n\n3. **Flop Action:**\n   - Checked to you, you bet 3, HJ raised to 10, you called. Pot now 98.\n\n4. **Turn Action:**\n   - Turn completes flush (9\u2666), HJ checks, you bet 20, HJ raises to 44.\n\n5. **Assessment:**\n   - Pocket tens are a strong hand, but vulnerable to flushes.\n   - Board completes flush, increasing the likelihood that HJ has a strong hand.\n   - HJ's line suggests strength or a bluff.\n\n6. **Decision:**\n   - Folding is optimal due to the high risk of HJ having a flush or stronger hand.\n   - The pot odds and risk of losing to a flush outweigh potential gains.\n\n**Final Action: Fold**"
+    },
+    {
+        "Index": 282,
+        "Response": "fold"
+    },
+    {
+        "Index": 283,
+        "Response": "Fold\n\n**Answer:** Fold"
+    },
+    {
+        "Index": 284,
+        "Response": "The optimal action is to bet.\n\n```bet\n```"
+    },
+    {
+        "Index": 285,
+        "Response": "Fold\n\n**Step-by-Step Explanation:**\n\n1. **Pre-Flop Action**: The UTG player started the betting by raising, and the HJ (me) made a 3-bet which was called by UTG.\n\n2. **Flop Check**: Both players checked on the flop, indicating possible weakness or a traps.\n\n3. **Turn Action**: UTG checked and then raised after I bet 15 chips. This suggests they might have a strong hand or a bluff.\n\n4. **Hand Strength**: My A-Q is strong but vulnerable to higher pairs, straights, or flushes, especially considering the Ten on the turn.\n\n5. **Pot Dynamics**: The pot size after the raising is significant, and considering the risk of being behind, folding is the safer play.\n\n**Decision**: Fold."
+    },
+    {
+        "Index": 286,
+        "Response": "fold"
+    },
+    {
+        "Index": 287,
+        "Response": "to bet 16 chips\n\nYour optimal action is: bet 16 chips"
+    },
+    {
+        "Index": 288,
+        "Response": "call"
+    },
+    {
+        "Index": 289,
+        "Response": "Fold"
+    },
+    {
+        "Index": 290,
+        "Response": "fold"
+    },
+    {
+        "Index": 291,
+        "Response": "Fold"
+    },
+    {
+        "Index": 292,
+        "Response": "check"
+    },
+    {
+        "Index": 293,
+        "Response": "fold"
+    },
+    {
+        "Index": 294,
+        "Response": "fold"
+    },
+    {
+        "Index": 295,
+        "Response": "fold"
+    },
+    {
+        "Index": 296,
+        "Response": "bet"
+    },
+    {
+        "Index": 297,
+        "Response": "The optimal action is to raise."
+    },
+    {
+        "Index": 298,
+        "Response": "In this scenario, considering the board, my hand strength, and the opponent's actions, the optimal decision is to bet.\n\n**Answer:** Bet 10 chips."
+    },
+    {
+        "Index": 299,
+        "Response": "The optimal action is to **bet** an amount to extract value from potential worse hands while also protecting against bluffs.\n\nIt's **bet**.\n\nThe optimal action is to **bet**.\n\nbettting: The optimal action is to place a bet (bet)."
+    },
+    {
+        "Index": 300,
+        "Response": "fold"
+    },
+    {
+        "Index": 301,
+        "Response": "fold\n\nfold"
+    },
+    {
+        "Index": 302,
+        "Response": "fold"
+    },
+    {
+        "Index": 303,
+        "Response": "Fold"
+    },
+    {
+        "Index": 304,
+        "Response": "bet 20 chips"
+    },
+    {
+        "Index": 305,
+        "Response": "fold"
+    },
+    {
+        "Index": 306,
+        "Response": "Fold"
+    },
+    {
+        "Index": 307,
+        "Response": "call"
+    },
+    {
+        "Index": 308,
+        "Response": "Call 8 chips.\n\nCall\n\nThe optimal action is to call the bet.\n\nCall"
+    },
+    {
+        "Index": 309,
+        "Response": "call"
+    },
+    {
+        "Index": 310,
+        "Response": "To bet 5 chips.\n\nyour optimal action is: bet 5 chips\n\nThe optimal action is to bet 5 chips."
+    },
+    {
+        "Index": 311,
+        "Response": "**Final Answer**\nYour optimal action is: FOLD\n\nWait, no, that can't be right. I think I made a mistake there. Let me correct that.\n\nIn the thought process, considering the hand strength and the situation, the optimal decision is to go all-in. But the answer provided earlier was FOLD, which doesn't make sense because with four aces, folding is incorrect.\n\nCorrected Answer:\n\n**Final Answer**\nYour optimal action is: CALL"
+    },
+    {
+        "Index": 312,
+        "Response": "call"
+    },
+    {
+        "Index": 313,
+        "Response": "check"
+    },
+    {
+        "Index": 314,
+        "Response": "fold"
+    },
+    {
+        "Index": 315,
+        "Response": "Your optimal action is to check."
+    },
+    {
+        "Index": 316,
+        "Response": "Fold"
+    },
+    {
+        "Index": 317,
+        "Response": "Fold"
+    },
+    {
+        "Index": 318,
+        "Response": "bet"
+    },
+    {
+        "Index": 319,
+        "Response": "Fold\n\nThe optimal action is to fold (F)."
+    },
+    {
+        "Index": 320,
+        "Response": "fold"
+    },
+    {
+        "Index": 321,
+        "Response": "fold"
+    },
+    {
+        "Index": 322,
+        "Response": "I call 7 chips.\n\nYour optimal action is: call"
+    },
+    {
+        "Index": 323,
+        "Response": "fold"
+    },
+    {
+        "Index": 324,
+        "Response": "Your optimal action is: Fold\n\n**Step-by-Step Explanation:**\n\n1. **Hand Evaluation:**\n   - Holding Queen of Clubs and Four of Clubs gives you a possible flush draw with four to a flush on the turn.\n   - However, the board (8h, 8c, 10c, Kc) allows multiple potential stronger hands like full houses, sets, or higher flushes.\n\n2. **Action History:**\n   - Pre-flop: SB raised, BB called, indicating interest in a strong hand.\n   - Flop: BB bet, SB called, suggesting possible value or bluff.\n   - Turn: SB bet, BB raised significantly, indicating potential strength.\n\n3. **Opponent's Line:**\n   - BB's actions suggest a strong hand capable of value betting or bluff catching.\n   - The raise to 25 on the turn, after a bet of 8, is substantial and indicates a strong holding.\n\n4. **Pot Odds and Risk:**\n   - The required call is high relative to the pot, making it riskier with only a flush draw.\n   - Potential for overpairs or stronger flushes make it unfavorable to continue.\n\n**Decision: Fold.**\n\n```text\nFold\n```"
+    },
+    {
+        "Index": 325,
+        "Response": "Check"
+    },
+    {
+        "Index": 326,
+        "Response": "fold"
+    },
+    {
+        "Index": 327,
+        "Response": "bet 6 chips"
+    },
+    {
+        "Index": 328,
+        "Response": "fold"
+    },
+    {
+        "Index": 329,
+        "Response": "fold"
+    },
+    {
+        "Index": 330,
+        "Response": "fold"
+    },
+    {
+        "Index": 331,
+        "Response": "folds"
+    },
+    {
+        "Index": 332,
+        "Response": "Your optimal action is: fold"
+    },
+    {
+        "Index": 333,
+        "Response": "Fold\n\nThe optimal action is to fold."
+    },
+    {
+        "Index": 334,
+        "Response": "Your optimal action is: check"
+    },
+    {
+        "Index": 335,
+        "Response": "Fold"
+    },
+    {
+        "Index": 336,
+        "Response": "Fold  \nYour optimal action is: fold"
+    },
+    {
+        "Index": 337,
+        "Response": "fold"
+    },
+    {
+        "Index": 338,
+        "Response": "bet"
+    },
+    {
+        "Index": 339,
+        "Response": "Your optimal action is: check"
+    },
+    {
+        "Index": 340,
+        "Response": "HJ check"
+    },
+    {
+        "Index": 341,
+        "Response": "Call\n\nCall: 9 chips\n\nThe optimal action is to call the bet. Despite the risk of a higher flush or straight flush, my Queen high flush is strong enough to warrant a call against the BB's river bet, considering their check/raise line and the strength of my hand on the board."
+    },
+    {
+        "Index": 342,
+        "Response": "check"
+    },
+    {
+        "Index": 343,
+        "Response": "Your optimal action is: **fold**"
+    },
+    {
+        "Index": 344,
+        "Response": "call"
+    },
+    {
+        "Index": 345,
+        "Response": "fold"
+    },
+    {
+        "Index": 346,
+        "Response": "call"
+    },
+    {
+        "Index": 347,
+        "Response": "check"
+    },
+    {
+        "Index": 348,
+        "Response": "call"
+    },
+    {
+        "Index": 349,
+        "Response": "fold"
+    },
+    {
+        "Index": 350,
+        "Response": "The optimal action is to Bet 3.0 chips.\n\nThe final answer is:\n\nYour optimal action is: bet 3 chips"
+    },
+    {
+        "Index": 351,
+        "Response": "bet 5 chips"
+    },
+    {
+        "Index": 352,
+        "Response": "call 6.5 chips\n\ncall 6.5 chips"
+    },
+    {
+        "Index": 353,
+        "Response": "Fold"
+    },
+    {
+        "Index": 354,
+        "Response": "The optimal action is: bet"
+    },
+    {
+        "Index": 355,
+        "Response": "To make the optimal decision, you have a strong hand with top pair (Ace) and a backdoor flush draw in a heads-up situation. Facing a check from the BB on a draw-light flop, a bet to extract value from worse hands is advisable. \n\nYour optimal action is to **bet 4 chips** into the pot."
+    },
+    {
+        "Index": 356,
+        "Response": "Fold."
+    },
+    {
+        "Index": 357,
+        "Response": "fold"
+    },
+    {
+        "Index": 358,
+        "Response": "fold"
+    },
+    {
+        "Index": 359,
+        "Response": "fold"
+    },
+    {
+        "Index": 360,
+        "Response": "Fold."
+    },
+    {
+        "Index": 361,
+        "Response": "call"
+    },
+    {
+        "Index": 362,
+        "Response": "The optimal action is: Fold."
+    },
+    {
+        "Index": 363,
+        "Response": "check"
+    },
+    {
+        "Index": 364,
+        "Response": "fold"
+    },
+    {
+        "Index": 365,
+        "Response": "fold"
+    },
+    {
+        "Index": 366,
+        "Response": "fold"
+    },
+    {
+        "Index": 367,
+        "Response": "Your optimal action is: Fold"
+    },
+    {
+        "Index": 368,
+        "Response": "Fold"
+    },
+    {
+        "Index": 369,
+        "Response": "check"
+    },
+    {
+        "Index": 370,
+        "Response": "check"
+    },
+    {
+        "Index": 371,
+        "Response": "fold"
+    },
+    {
+        "Index": 372,
+        "Response": "fold"
+    },
+    {
+        "Index": 373,
+        "Response": "raise"
+    },
+    {
+        "Index": 374,
+        "Response": "FOLD"
+    },
+    {
+        "Index": 375,
+        "Response": "Check"
+    },
+    {
+        "Index": 376,
+        "Response": "Fold"
+    },
+    {
+        "Index": 377,
+        "Response": "fold"
+    },
+    {
+        "Index": 378,
+        "Response": "fold"
+    },
+    {
+        "Index": 379,
+        "Response": "Your optimal action is: check\n\nBut wait, in the river, do I check or bet? Given the line of the hand, I think checking is the right move here.\n\ncheck\n\nWait, no: After considering, in the river, since I have a strong hand, and considering the BB's passiveness, maybe betting is better to extract value.\n\nbet\n\nI think betting is better here to get value from worse hands or bluffs.\n\nYour optimal action is: bet 7 chips.\n\nWait, overriding my initial thought, let me think again. The river is an Eight, which doesn't complete any draws. Since I bet the turn and got called, on the river, BB checks. I can either check or bet. Since I have a strong hand, and the board doesn't seem to have a lot of bluffs, but BB could be bluffing. Alternatively, he might have a better two pair (like K vs. A), which would beat me.\n\nConsidering, I think checking is safer, but perhaps I should bet to get paid off.\n\nI think bet 7 chips.\n\nbet 7 chips\n\nWait, in the scenario, the pot is 14 chips on the turn. After I bet 5 and to call 5, making the pot 14 + 5 +5 = 24? Wait, no, the pot before turn was 4 (from pre) + flop checks: 4 remains. Then turn, I bet 5, BB calls, so pot becomes 4 +5 +5=14. Wait, no: Before flop, SB is 0.5, BB is 1. I raised to 2, BB calls, so total before flop is SB (0.5) + BB (1) + my 2, total 3.5 chips, so after flop checks, pot is 3.5. On turn, I bet 5, BB calls 5, so pot becomes 3.5 +5 +5=13.5. Then river, BB checks, so pot is 13.5.\n\nI think earlier message says the pot size is 14 chips on river. Then I have to bet, check. The optimal action is to bet.\n\nSo, your optimal action is: bet 7 chips.\n\nWait, but I'm in a spot where I have to decide. I think, given the action, I have a strong hand but unsure if it's best. Given BB's line, betting to get value makes sense.\n\nYour optimal action is: bet 7 chips.\n\nWait, but on the river, BB checks. So I can either check or bet. Since J is in HJ, and from the flop, the action is a bit strange. I think I'll check.\n\nYour optimal action is: check\n\nBut the thought process is letting me change my mind. Given that, I think best to check.\n\nBut wait, in the end, since I have a strong hand, I think I should bet.\n\nAfter going back and forth, I think The correct decision is to check.\n\nBut I'm getting confused. Maybe checking is the better line.\n\nI think the correct action is to check.\n\nBut wait, in reality, with two pair, it's often right to bet for value. So I think I should bet.\n\nWait, no. Because the BB checked the river.\n\nSo to sum up, I have two pair, BB checked all streets. When someone checks back at you, especially on the river, and you have a strong hand, it's often right to bet to get value from worse hands or for bluffs.\n\nSo, the optimal action is: bet 7 chips.\n\nBut the final answer is likely to bet.\n\nBut considering time, I think I'll settle on bet.\n\nYour optimal action is: bet 7 chips.\n\nWait, but the pot is 14, so perhaps min-betting 7 is standard. Alternatively, I can go higher.\n\nWait, but in the previous action, I bet 5 on the turn, so on the river, to control the pot, maybe 7 is the right bet size.\n\nSo yes, bet 7.\n\nFinal Answer:\n\nbet 7 chips"
+    },
+    {
+        "Index": 380,
+        "Response": "check"
+    },
+    {
+        "Index": 381,
+        "Response": "Fold."
+    },
+    {
+        "Index": 382,
+        "Response": "fold"
+    },
+    {
+        "Index": 383,
+        "Response": "The optimal action is to bet 17 chips."
+    },
+    {
+        "Index": 384,
+        "Response": "The optimal action is to fold.\n\n**FOLD**"
+    },
+    {
+        "Index": 385,
+        "Response": "fold"
+    },
+    {
+        "Index": 386,
+        "Response": "To call."
+    },
+    {
+        "Index": 387,
+        "Response": "check"
+    },
+    {
+        "Index": 388,
+        "Response": "The optimal action is to call."
+    },
+    {
+        "Index": 389,
+        "Response": "fold"
+    },
+    {
+        "Index": 390,
+        "Response": "check"
+    },
+    {
+        "Index": 391,
+        "Response": "fold"
+    },
+    {
+        "Index": 392,
+        "Response": "CO check"
+    },
+    {
+        "Index": 393,
+        "Response": "Your optimal action is to fold.\n\nfold"
+    },
+    {
+        "Index": 394,
+        "Response": "fold"
+    },
+    {
+        "Index": 395,
+        "Response": "fold"
+    },
+    {
+        "Index": 396,
+        "Response": "Your optimal action is: fold"
+    },
+    {
+        "Index": 397,
+        "Response": "Based on the analysis, the optimal action is to call.\n\nYour optimal action is: Call."
+    },
+    {
+        "Index": 398,
+        "Response": "bet 10 chips"
+    },
+    {
+        "Index": 399,
+        "Response": "Fold."
+    }
+]
