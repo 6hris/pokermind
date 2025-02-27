@@ -32,6 +32,11 @@ class Card:
             raise TypeError("Can only compare with another Card object")
         return self.rank_value < other.rank_value
     
+    def to_eval_str(self):
+        rank_str = 'T' if self.rank == '10' else self.rank
+        suit_str = self.suit[0].upper()
+        return rank_str + suit_str
+    
 
 class Deck:
     def __init__(self):
