@@ -72,7 +72,7 @@ class Game:
     def betting_round(self, round_type):
         start_idx = self.get_starting_player_index(round_type)
 
-        if start_idx == -1 or len([p for p in self.players if p.status == PlayerStatus.ACTIVE]) <= 1:
+        if start_idx == -1 or len([p for p in self.players if p.status != PlayerStatus.FOLDED]) <= 1:
             return
         
         if round_type != "pre-flop":
@@ -81,11 +81,12 @@ class Game:
         
         num_players = len(self.players)
         while True:
-            active_players = [p for p in self.players if p.status == PlayerStatus.ACTIVE]
+            active_players = [p for p in self.players if p.status != PlayerStatus.FOLDED]
 
-            if all(p.current_bet == self.current_bet or p.chips == 0 for p in active_players):
+            if len(active_players) <= 1:
                 break
             
+            changed_bet = False
             curr_idx = start_idx
             for _ in range(num_players):
                 player = self.players[curr_idx]
@@ -95,28 +96,35 @@ class Game:
                     if action == PlayerAction.FOLD:
                         player.fold()
                     elif action == PlayerAction.CHECK:
+                        print(f"{player.name} checks")
                         pass
                     elif action == PlayerAction.CALL:
                         call_amount = self.current_bet - player.current_bet
                         actual_bet = player.place_bet(call_amount)
                         print(f"{player.name} calls {actual_bet}")
                     elif action == PlayerAction.BET:
+                        changed_bet = True
                         bet_amount = max(self.min_bet, amount)
-                        player.place_bet(bet_amount)
+                        actual_bet = player.place_bet(bet_amount)
                         self.last_raise = bet_amount
                         self.current_bet = player.current_bet
                         print(f"{player.name} bets {actual_bet}")
                     elif action == PlayerAction.RAISE:
+                        changed_bet = True
                         raise_amount = max(self.last_raise, amount)
                         player.place_bet(raise_amount)
                         self.current_bet = player.current_bet
                         print(f"{player.name} raises {raise_amount}")
                     elif action == PlayerAction.ALL_IN:
+                        changed_bet = True
                         actual_bet = player.place_bet(player.chips)
                         if player.current_bet > self.current_bet:
                             self.current_bet = player.current_bet
                         print(f"{player.name} all-in {actual_bet}")
                 curr_idx = (curr_idx + 1) % num_players
+        
+            if not changed_bet:
+                break
 
         for player in self.players:
             self.pot += player.current_bet
@@ -180,7 +188,7 @@ class Game:
                 print(f"\nSplit pot ({self.pot} chips) between: {winner_names}")
             else:
                 print(f"\n{winners[0].name} wins {self.pot} chips")
-                
+
             for winner in winners:
                 winner.chips += pot_share
         self.pot = 0
