@@ -114,7 +114,7 @@ class Game:
                         if player.current_bet > self.current_bet:
                             self.current_bet = player.current_bet
                         print(f"{player.name} all-in {actual_bet}")
-            curr_idx = (curr_idx + 1) % num_players
+                curr_idx = (curr_idx + 1) % num_players
 
         for player in self.players:
             self.pot += player.current_bet
@@ -132,7 +132,7 @@ class Game:
         score, ranks = zip(*sorted((cnt, rank) for rank, cnt in {ranks.find(r): ''.join(hand).count(r) for r, _ in hand}.items())[::-1])
         if len(score) == 5:
             if ranks[0:2] == (12, 3): ranks = (3, 2, 1, 0, -1)
-            score = ([1,(3,1,2)],[(3,1,3),(5,)])[len({suit for _, suit in hand}) == 1][ranks[0] - ranks[4] == 4]
+            score = ([(1,),(3,1,2)],[(3,1,3),(5,)])[len({suit for _, suit in hand}) == 1][ranks[0] - ranks[4] == 4]
         return score, ranks
 
     def play_hand(self):
@@ -159,8 +159,8 @@ class Game:
             active_players[0].chips += self.pot
         elif len(active_players) > 1:
             scores = [(p, self.evaluate_hand(p.hand)) for p in active_players]
-            best_score = max(score for score, _ in scores)
-            winners = [p for score, p in scores if score == best_score]
+            best_evaluation = max(score for _, score in scores)
+            winners = [p for p, score in scores if score == best_evaluation]
             pot_share = self.pot // len(winners)
             for winner in winners:
                 winner.chips += pot_share

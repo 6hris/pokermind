@@ -1,4 +1,5 @@
 from enum import Enum
+import random
 
 class PlayerAction(Enum):
     """Possible actions a player can take during their turn."""
@@ -81,13 +82,22 @@ class Player:
         
         return actions
     
-    def choose_action(self, current_bet, game_state_placeholder):
-        # placeholder stuff for llm decision-making
+    def choose_action(self, current_bet, game_state=None):
         available_actions = self.get_available_actions(current_bet)
-        if PlayerAction.CALL in available_actions:
-            return PlayerAction.CALL, None
-        elif PlayerAction.CHECK in available_actions:
-            return PlayerAction.CHECK, None
-        return PlayerAction.FOLD, None
+        
+        if PlayerAction.CHECK in available_actions:
+            return PlayerAction.CHECK, 0
+        elif PlayerAction.CALL in available_actions:
+            return PlayerAction.CALL, 0
+        elif self.chips <= 20 and PlayerAction.ALL_IN in available_actions:
+            return PlayerAction.ALL_IN, self.chips
+        elif random.random() < 0.1 and PlayerAction.RAISE in available_actions:
+            return PlayerAction.RAISE, current_bet * 2
+        elif random.random() < 0.2 and PlayerAction.FOLD in available_actions:
+            return PlayerAction.FOLD, 0
+        elif PlayerAction.CALL in available_actions:
+            return PlayerAction.CALL, 0
+        else:
+            return PlayerAction.FOLD, 0
         
         
