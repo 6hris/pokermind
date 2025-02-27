@@ -1,7 +1,7 @@
 from typing import List
 from deck import Card, Deck, format_cards
 from player import Player, PlayerStatus, PlayerAction
-
+from treys import Evaluator, Card as TreysCard
 
 class Game:
     def __init__(self, players: List[Player], sb: int, bb: int):
@@ -15,6 +15,8 @@ class Game:
         self.dealer_pos = 0
         self.min_bet = bb
         self.last_raise = bb
+        self.evaluator = Evaluator()
+
     
     def set_player_positions(self):
         num_players = len(self.players)
@@ -121,10 +123,10 @@ class Game:
             player.current_bet = 0
     
     def evaluate_hand(self, hand: List[Card]):
-        def cards_to_str(cards: List[Card]) -> str:
-            return ' '.join(card.to_eval_str() for card in cards)
-        full_hand_str = cards_to_str(self.community_cards + hand) 
-        return self.evaluate(full_hand_str.split())
+        treys_hand = [TreysCard.new(card.to_treys_str()) for card in hand]
+        treys_community = [TreysCard.new(card.to_treys_str()) for card in self.community_cards]
+
+        return self.evaluator.evaluate(treys_community, treys_hand)
     
     def evaluate(self, hand):
         ranks = '23456789TJQKA'
@@ -142,9 +144,16 @@ class Game:
         self.pot = 0
         self.deck.shuffle()
         self.rotate_dealer()
+        print("\n===== NEW HAND =====")
+        print(f"Dealer: {self.players[self.dealer_pos].name}")
+    
 
         self.post_blinds()
         self.deal_hole_cards()
+
+        for player in self.players:
+            if player.hand:
+                print(f"{player.name}'s hand: {format_cards(player.hand)}")
 
         for round_type, card_count in [("pre-flop", 0), ("flop", 3), ("turn", 1), ("river", 1)]:
             self.betting_round(round_type)
@@ -153,15 +162,25 @@ class Game:
                 break
             if card_count > 0:
                 self.deal_community_cards(card_count)
+                print(f"\n--- {round_type.capitalize()}: {format_cards(self.community_cards)} ---")
         
         active_players = [p for p in self.players if p.status == PlayerStatus.ACTIVE]
         if len(active_players) == 1:
             active_players[0].chips += self.pot
+            print(f"\n{active_players[0].name} wins {self.pot} chips (uncontested)")
         elif len(active_players) > 1:
+            print("\n=== SHOWDOWN ===")
             scores = [(p, self.evaluate_hand(p.hand)) for p in active_players]
-            best_evaluation = max(score for _, score in scores)
-            winners = [p for p, score in scores if score == best_evaluation]
-            pot_share = self.pot // len(winners)
+            best_score = min(score for _, score in scores) 
+            winners = [p for p, score in scores if score == best_score]
+            pot_share = self.pot // len(winners) 
+            
+            winner_names = ", ".join(p.name for p in winners)
+            if len(winners) > 1:
+                print(f"\nSplit pot ({self.pot} chips) between: {winner_names}")
+            else:
+                print(f"\n{winners[0].name} wins {self.pot} chips")
+                
             for winner in winners:
                 winner.chips += pot_share
         self.pot = 0
