@@ -147,51 +147,6 @@ def test_full_hand(game):
         print(f"{player.name}: Chips={player.chips}")
 
 
-def test_hand_evaluation():
-    """Test hand evaluation logic"""
-    print("\n=== Hand Evaluation Test ===")
-    
-    # Create specific hands for testing
-    # This is basic and should be expanded with more test cases
-    deck = Deck()
-    
-    # Test flush
-    flush = [
-        Card("hearts", "A"),
-        Card("hearts", "5"),
-        Card("hearts", "7"),
-        Card("hearts", "9"),
-        Card("hearts", "J"),
-    ]
-    
-    # Test straight
-    straight = [
-        Card("hearts", "A"),
-        Card("diamonds", "2"),
-        Card("clubs", "3"),
-        Card("spades", "4"),
-        Card("hearts", "5"),
-    ]
-    
-    # Test full house
-    full_house = [
-        Card("hearts", "K"),
-        Card("diamonds", "K"),
-        Card("clubs", "K"),
-        Card("spades", "5"),
-        Card("hearts", "5"),
-    ]
-    
-    # Creating a temporary game just for evaluation
-    temp_game = Game([], 5, 10)
-    
-    # Testing different hands
-    for hand, name in [(flush, "Flush"), (straight, "Straight"), (full_house, "Full House")]:
-        print(f"Testing {name}: {format_cards(hand)}")
-        temp_game.community_cards = hand[2:] # First 3 cards as community
-        result = temp_game.evaluate_hand(hand[:2])  # Last 2 as hole cards
-        print(f"Evaluation result: {result}")
-
 
 def main():
     """Main test function"""
@@ -201,8 +156,6 @@ def main():
     test_dealing(game)
     test_betting(game)
     test_full_hand(game)
-    test_hand_evaluation()
-
 
 if __name__ == "__main__":
     main()

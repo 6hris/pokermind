@@ -84,7 +84,7 @@ class Player:
     
     def choose_action(self, current_bet, game_state=None):
         available_actions = self.get_available_actions(current_bet)
-        if random.random() < 0.2 and PlayerAction.RAISE in available_actions:
+        if random.random() < 0.8 and PlayerAction.RAISE in available_actions:
             return PlayerAction.RAISE, current_bet * 2
         elif random.random() < 0.1 and PlayerAction.FOLD in available_actions:
             return PlayerAction.FOLD, 0

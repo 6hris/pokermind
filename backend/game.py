@@ -64,7 +64,7 @@ class Game:
         
         for i in range(len(self.players)):
             idx = (start_pos + i) % len(self.players)
-            if self.players[idx].status == PlayerStatus.ACTIVE:
+            if self.players[idx].status != PlayerStatus.FOLDED:
                 return idx
         
         return -1 
@@ -90,7 +90,7 @@ class Game:
             curr_idx = start_idx
             for _ in range(num_players):
                 player = self.players[curr_idx]
-                if (player.status == PlayerStatus.ACTIVE and player.chips > 0 and (player.current_bet < self.current_bet or self.current_bet == 0)):
+                if (player.status != PlayerStatus.FOLDED and player.chips > 0 and (player.current_bet < self.current_bet or self.current_bet == 0)):
                     action, amount = player.choose_action(self.current_bet, "game_state_placeholder")
                     print(f"{player.name} {action.value}")
                     if action == PlayerAction.FOLD:
@@ -165,14 +165,14 @@ class Game:
 
         for round_type, card_count in [("pre-flop", 0), ("flop", 3), ("turn", 1), ("river", 1)]:
             self.betting_round(round_type)
-            active_players = [p for p in self.players if p.status == PlayerStatus.ACTIVE]
+            active_players = [p for p in self.players if p.status != PlayerStatus.FOLDED]
             if len(active_players) <= 1:
                 break
             if card_count > 0:
                 self.deal_community_cards(card_count)
                 print(f"\n--- {round_type.capitalize()}: {format_cards(self.community_cards)} ---")
         
-        active_players = [p for p in self.players if p.status == PlayerStatus.ACTIVE]
+        active_players = [p for p in self.players if p.status != PlayerStatus.FOLDED]
         if len(active_players) == 1:
             active_players[0].chips += self.pot
             print(f"\n{active_players[0].name} wins {self.pot} chips (uncontested)")
