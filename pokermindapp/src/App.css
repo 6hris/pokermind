@@ -21,10 +21,11 @@
 }
 
 .poker-table {
-  width: 300px;
+  width: 400px;
   height: 200px;
   background-color: green;
   border: 5px solid gold;
+  border: 5px solid black;
   border-radius: 50%;
 }
 
