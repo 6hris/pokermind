@@ -156,6 +156,33 @@ class Game:
             "actions_so_far": list(self.hand_context)
         }
     
+    def get_player_context(self, player: Player) -> dict:
+        public_context = self.get_hand_context()
+
+        if player.status != PlayerStatus.FOLDED:
+            hole_cards_str = "".join([card.to_treys_str() for card in player.hand])
+        else:
+            hole_cards_str = "" 
+
+        call_amount = max(0, self.current_bet - player.current_bet)
+        min_raise = max(self.last_raise, self.bb) if self.current_bet > 0 else self.bb
+
+        player_context = {
+            "player_name": player.name,
+            "player_chips": player.chips,
+            "player_status": player.status.value,
+            "hole_cards": hole_cards_str,
+            "call_amount": call_amount,
+            "min_raise": min_raise,
+            "community_cards": public_context["community_cards"],
+            "pot": public_context["pot"],
+            "players_summary": public_context["players"],   
+            "actions_so_far": public_context["actions_so_far"]
+        }
+
+        return player_context
+
+    
     def evaluate_hand(self, hand: List[Card]):
         treys_hand = [TreysCard.new(card.to_treys_str()) for card in hand]
         treys_community = [TreysCard.new(card.to_treys_str()) for card in self.community_cards]

@@ -141,7 +141,7 @@ def test_full_hand(game):
     
     game.play_hand()
     print(f"Community cards: {format_cards(game.community_cards)}")
-    print(game.get_hand_context())
+    print(game.get_player_context(game.players[0]))
     print("\nAfter hand:")
     for player in game.players:
         print(f"{player.name}: Chips={player.chips}")
