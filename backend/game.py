@@ -16,6 +16,7 @@ class Game:
         self.min_bet = bb
         self.last_raise = bb
         self.evaluator = Evaluator()
+        self.hand_context = []
 
     
     def set_player_positions(self):
@@ -78,6 +79,8 @@ class Game:
         if round_type != "pre-flop":
             self.current_bet = 0
             self.last_raise = self.bb
+
+        self.hand_context.append(f"current round: {round_type}")
         
         num_players = len(self.players)
         while True:
@@ -94,14 +97,17 @@ class Game:
                     action, amount = player.choose_action(self.current_bet, "game_state_placeholder")
                     print(f"{player.name} {action.value}")
                     if action == PlayerAction.FOLD:
+                        self.hand_context.append(f"{player.name} FOLDS")
                         player.fold()
                     elif action == PlayerAction.CHECK:
                         print(f"{player.name} checks")
+                        self.hand_context.append(f"{player.name} checks")
                         pass
                     elif action == PlayerAction.CALL:
                         call_amount = self.current_bet - player.current_bet
                         actual_bet = player.place_bet(call_amount)
                         print(f"{player.name} calls {actual_bet}")
+                        self.hand_context.append(f"{player.name} calls {actual_bet}")
                     elif action == PlayerAction.BET:
                         changed_bet = True
                         bet_amount = max(self.min_bet, amount)
@@ -109,18 +115,21 @@ class Game:
                         self.last_raise = bet_amount
                         self.current_bet = player.current_bet
                         print(f"{player.name} bets {actual_bet}")
+                        self.hand_context.append(f"{player.name} bets {actual_bet}")
                     elif action == PlayerAction.RAISE:
                         changed_bet = True
                         raise_amount = max(self.last_raise, amount)
                         player.place_bet(raise_amount)
                         self.current_bet = player.current_bet
                         print(f"{player.name} raises {raise_amount}")
+                        self.hand_context.append(f"{player.name} raises {raise_amount}")
                     elif action == PlayerAction.ALL_IN:
                         changed_bet = True
                         actual_bet = player.place_bet(player.chips)
                         if player.current_bet > self.current_bet:
                             self.current_bet = player.current_bet
                         print(f"{player.name} all-in {actual_bet}")
+                        self.hand_context.append(f"{player.name} all-in {actual_bet}")
                 curr_idx = (curr_idx + 1) % num_players
         
             if not changed_bet:
@@ -129,6 +138,23 @@ class Game:
         for player in self.players:
             self.pot += player.current_bet
             player.current_bet = 0
+    
+    def get_hand_context(self) -> dict:
+        player_summaries = []
+        for p in self.players:
+            player_summaries.append({
+                "name": p.name,
+                "chips": p.chips,
+                "status": p.status.value,
+                "current_bet": p.current_bet,
+            })
+        
+        return {
+            "community_cards": format_cards(self.community_cards),
+            "pot": self.pot,
+            "players": player_summaries,
+            "actions_so_far": list(self.hand_context)
+        }
     
     def evaluate_hand(self, hand: List[Card]):
         treys_hand = [TreysCard.new(card.to_treys_str()) for card in hand]
@@ -152,6 +178,7 @@ class Game:
         self.pot = 0
         self.deck.shuffle()
         self.rotate_dealer()
+        self.hand_context = []
         print("\n===== NEW HAND =====")
         print(f"Dealer: {self.players[self.dealer_pos].name}")
     
