@@ -1,0 +1,48 @@
+/* src/App.css */
+.App {
+  text-align: center;
+}
+
+.container {
+  display: flex;
+  justify-content: space-between;
+  padding: 20px;
+}
+
+.settings {
+  width: 30%;
+}
+
+.table {
+  width: 40%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.poker-table {
+  width: 400px;
+  height: 200px;
+  background-color: green;
+  border: 5px solid gold;
+  border: 5px solid black;
+  border-radius: 50%;
+}
+
+.message-log {
+  width: 25%;
+  border: 1px solid #ccc;
+  padding: 10px;
+}
+
+.input-fields {
+  margin: 10px 0;
+}
+
+input[type="text"],
+input[type="number"],
+select {
+  width: 100%;
+  margin: 5px 0;
+  padding: 8px;
+}
