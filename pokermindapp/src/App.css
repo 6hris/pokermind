@@ -20,13 +20,41 @@
   align-items: center;
 }
 
-.poker-table {
+/* 1) Table container is fixed at 400x200 and anchors seat positions */
+.table-container {
+  position: relative;    /* so .player-seat uses this as its parent for absolute positioning */
   width: 400px;
   height: 200px;
+  margin: 0 auto;        /* optional: center horizontally within the .table div */
+}
+
+/* 2) Poker table now fills the container */
+.poker-table {
+  width: 100%;
+  height: 100%;
   background-color: green;
-  border: 5px solid gold;
   border: 5px solid black;
   border-radius: 50%;
+}
+
+/* Each seat is a small circle or icon. We'll just do a circle with text for now. */
+.player-seat {
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  background-color: #fff;
+  border-radius: 50%;
+  text-align: center;
+  line-height: 40px;
+  border: 2px solid #333;
+  font-size: 0.8rem;
+  cursor: default;
+}
+
+.user-seat {
+  /* optionally some styling specifically for the user seat */
+  background-color: yellow;
+  border-color: #333;
 }
 
 .message-log {
