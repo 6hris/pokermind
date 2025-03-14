@@ -1,4 +1,4 @@
-// components/SetupPanel.js
+// SetupPanel.js
 import React, { useState } from 'react';
 
 export default function SetupPanel({
@@ -10,50 +10,65 @@ export default function SetupPanel({
   setStartingAmount,
   playAgainstLLMs,
   setPlayAgainstLLMs,
+  modelsInGame,
+  setModelsInGame,
   onStartGame
 }) {
-  // You can expand/modify these model names as you like:
+  // Example model names and a small color palette
   const availableModels = ['GPT4o', 'GPT-3.5', 'CustomModel'];
+  const colorPalette = ['red', 'blue', 'green', 'orange', 'purple', 'magenta'];
 
-  // (A) Controls whether the dropdown is visible when you click "+Add Models"
+  // Track the currently selected model from the dropdown
+  const [selectedModel, setSelectedModel] = useState(availableModels[0]);
   const [showModelDropdown, setShowModelDropdown] = useState(false);
 
-  // (B) Which model is currently selected in the dropdown
-  const [selectedModel, setSelectedModel] = useState(availableModels[0]);
+  // Pick a random color from the palette
+  const getRandomColor = () => {
+    const randomIndex = Math.floor(Math.random() * colorPalette.length);
+    return colorPalette[randomIndex];
+  };
 
-  // (C) The array of models that have been "added" to the game
-  const [modelsInGame, setModelsInGame] = useState([]);
-
-  // (D) Add button logic
+  // Add a new model (with a color) to the parent array
   const addModel = () => {
-    // You can add additional checks (max 5 or 6 AI) if needed
-    setModelsInGame((prev) => [...prev, selectedModel]);
-    // Optionally hide the dropdown after adding
+    const maxAIs = playAgainstLLMs ? 5 : 6;
+    if (modelsInGame.length >= maxAIs) {
+      alert(
+        playAgainstLLMs
+          ? 'Cannot add more than 5 AI if the user is playing.'
+          : 'Cannot add more than 6 AI if the user is not playing.'
+      );
+      return;
+    }
+
+    // Create an object containing the model name + color
+    const newModel = {
+      name: selectedModel,
+      color: getRandomColor(),
+    };
+
+    setModelsInGame((prev) => [...prev, newModel]);
     setShowModelDropdown(false);
   };
 
-  // (E) Remove a model from the array
+  // Remove a model by index
   const removeModel = (index) => {
     setModelsInGame((prev) => prev.filter((_, i) => i !== index));
   };
 
-  // (F) Wrap your "start game" logic to pass along selected AI models
-  const handleStartGameWithModels = () => {
-    // If you need the chosen models at the parent level, pass them here
-    onStartGame(modelsInGame);
+  // Start game
+  const handleStartGameClick = () => {
+    onStartGame();
   };
 
   return (
     <div className="settings">
-      {/* ---- The +Add Models Button ---- */}
       <button
-        onClick={() => setShowModelDropdown((prev) => !prev)}
+        onClick={() => setShowModelDropdown(!showModelDropdown)}
         style={{ marginBottom: '10px' }}
       >
         +Add Models
       </button>
 
-      {/* ---- Show the dropdown when showModelDropdown === true ---- */}
       {showModelDropdown && (
         <div style={{ display: 'flex', gap: '8px', marginBottom: '10px' }}>
           <select
@@ -67,22 +82,31 @@ export default function SetupPanel({
             ))}
           </select>
           <button onClick={addModel}>Add</button>
-          {/* A small 'close' or 'delete' button to hide the dropdown, if desired */}
           <button onClick={() => setShowModelDropdown(false)}>X</button>
         </div>
       )}
 
-      {/* ---- List of models that the user has added ---- */}
+      {/* Show the list of models with color dots */}
       <ul style={{ textAlign: 'left' }}>
-        {modelsInGame.map((model, index) => (
+        {modelsInGame.map((modelObj, index) => (
           <li key={index} style={{ margin: '5px 0' }}>
-            {model}{' '}
+            {/* color dot */}
+            <span
+              style={{
+                display: 'inline-block',
+                width: 12,
+                height: 12,
+                borderRadius: '50%',
+                backgroundColor: modelObj.color,
+                marginRight: '8px',
+              }}
+            />
+            {modelObj.name}{' '}
             <button onClick={() => removeModel(index)}>Remove</button>
           </li>
         ))}
       </ul>
 
-      {/* ---- Toggle for whether user is playing ---- */}
       <div className="play-against">
         <label>
           <input
@@ -94,7 +118,6 @@ export default function SetupPanel({
         </label>
       </div>
 
-      {/* ---- Game Settings ---- */}
       <div className="input-fields">
         <label>Enter OpenRouter Key:</label>
         <input
@@ -118,7 +141,7 @@ export default function SetupPanel({
         />
       </div>
 
-      <button onClick={handleStartGameWithModels}>Start Game</button>
+      <button onClick={handleStartGameClick}>Start Game</button>
     </div>
   );
 }
