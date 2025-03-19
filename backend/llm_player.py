@@ -2,6 +2,7 @@ from player import Player, PlayerAction, PlayerStatus
 import json
 from litellm import completion
 from pydantic import BaseModel, ValidationError, Field
+import re
 
 class PokerActionResponse(BaseModel):
     action: str = Field(..., pattern="^(fold|call|raise)$")
@@ -26,6 +27,7 @@ class LLMPlayer(Player):
     
     def generate_prompt(self, current_bet, game_state):
         game_history = "\n".join(game_state['actions_so_far'])
+        hole_cards_str = "".join([card.to_treys_str() for card in self.hand])
         prompt_text = f"""
         You are an expert-level poker AI tasked with making optimal decisions in a poker game. Your job is to WIN! WIN! You will be given the current game state and your goal is to determine the best action to take.
 
@@ -33,7 +35,7 @@ class LLMPlayer(Player):
 
         Game history: {game_history}
 
-        Your Hole Cards: {self.hand}
+        Your Hole Cards: {hole_cards_str}
         Community Cards: {game_state['community_cards']}
         Pot: {game_state['pot']}
         Chips: {self.chips}
@@ -63,7 +65,10 @@ class LLMPlayer(Player):
                 api_key=self.api_key,
                 messages=[{"role": "user", "content": prompt}],
             )
-            action, raise_amount = self.parse_response(response["choices"][0]["message"]["content"])
+            response_text = response["choices"][0]["message"]["content"]
+            #print(f"LLM raw response: {response_text}")
+
+            action, raise_amount = self.parse_response(response_text)
         except Exception as e:
             print(f"Error parsing LLM response: {e}. Defaulting to FOLD.")
             action, raise_amount = PlayerAction.FOLD, None
@@ -71,13 +76,20 @@ class LLMPlayer(Player):
         return action, raise_amount
     
     def parse_response(self, response_text: str):
+        json_match = re.search(r"\{.*?\}", response_text, re.DOTALL)
+
+        if not json_match:
+            raise ValueError("LLM response did not contain any JSON content.")
+
+        json_str = json_match.group()
+
         try:
-            response_json = json.loads(response_text.strip())
+            response_json = json.loads(json_str)
             validated_response = PokerActionResponse.validate_action(response_json)
         except (json.JSONDecodeError, ValidationError, ValueError) as e:
             raise ValueError(f"LLM response validation error: {e}")
 
-        action = PlayerAction(validated_response.action.upper())
+        action = PlayerAction(validated_response.action.lower())
         raise_amount = validated_response.raise_amount
 
         return action, raise_amount

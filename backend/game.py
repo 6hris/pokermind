@@ -1,6 +1,7 @@
 from typing import List
 from deck import Card, Deck, format_cards
 from player import Player, PlayerStatus, PlayerAction
+from llm_player import LLMPlayer
 from treys import Evaluator, Card as TreysCard
 
 class Game:
@@ -94,19 +95,23 @@ class Game:
             for _ in range(num_players):
                 player = self.players[curr_idx]
                 if (player.status != PlayerStatus.FOLDED and player.chips > 0 and (player.current_bet < self.current_bet or self.current_bet == 0)):
-                    action, amount = player.choose_action(self.current_bet, "game_state_placeholder")
+                    if isinstance(player, LLMPlayer):
+                        action, amount = player.choose_action(self.current_bet, self.get_player_context(player))
+                    else:
+                        action, amount = player.choose_action(self.current_bet)
+                    
                     print(f"{player.name} {action.value}")
                     if action == PlayerAction.FOLD:
                         self.hand_context.append(f"{player.name} FOLDS")
                         player.fold()
                     elif action == PlayerAction.CHECK:
-                        print(f"{player.name} checks")
+                        #print(f"{player.name} checks")
                         self.hand_context.append(f"{player.name} checks")
                         pass
                     elif action == PlayerAction.CALL:
                         call_amount = self.current_bet - player.current_bet
                         actual_bet = player.place_bet(call_amount)
-                        print(f"{player.name} calls {actual_bet}")
+                        #print(f"{player.name} calls {actual_bet}")
                         self.hand_context.append(f"{player.name} calls {actual_bet}")
                     elif action == PlayerAction.BET:
                         changed_bet = True
@@ -114,21 +119,21 @@ class Game:
                         actual_bet = player.place_bet(bet_amount)
                         self.last_raise = bet_amount
                         self.current_bet = player.current_bet
-                        print(f"{player.name} bets {actual_bet}")
+                        #print(f"{player.name} bets {actual_bet}")
                         self.hand_context.append(f"{player.name} bets {actual_bet}")
                     elif action == PlayerAction.RAISE:
                         changed_bet = True
                         raise_amount = max(self.last_raise, amount)
                         player.place_bet(raise_amount)
                         self.current_bet = player.current_bet
-                        print(f"{player.name} raises {raise_amount}")
+                        #print(f"{player.name} raises {raise_amount}")
                         self.hand_context.append(f"{player.name} raises {raise_amount}")
                     elif action == PlayerAction.ALL_IN:
                         changed_bet = True
                         actual_bet = player.place_bet(player.chips)
                         if player.current_bet > self.current_bet:
                             self.current_bet = player.current_bet
-                        print(f"{player.name} all-in {actual_bet}")
+                        #print(f"{player.name} all-in {actual_bet}")
                         self.hand_context.append(f"{player.name} all-in {actual_bet}")
                 curr_idx = (curr_idx + 1) % num_players
         
