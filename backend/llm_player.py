@@ -42,14 +42,27 @@ class LLMPlayer(Player):
         Amount to call: {max(0, current_bet - self.current_bet)}
         Minimum raise over current bet: {game_state['min_raise']}
 
-        Important rules:
-        - Determine optimal action: fold, call, or raise.
+        CRITICAL INSTRUCTIONS:
+        - Determine optimal action: fold, call, or raise ONLY.
         - If raising, provide an appropriate raise amount.
-        - Output your decision in valid JSON format.
+        - You MUST output ONLY a valid JSON object with no other text.
+        - The action field MUST be one of: "fold", "call", or "raise".
+        - If action is "raise", raise_amount must be an integer > 0.
+        - If action is "fold" or "call", raise_amount must be null.
 
-        Output example:
+        VALID OUTPUT EXAMPLES:
         {{
           "action": "call",
+          "raise_amount": null
+        }}
+
+        {{
+          "action": "raise",
+          "raise_amount": 50
+        }}
+
+        {{
+          "action": "fold",
           "raise_amount": null
         }}
         """
@@ -58,21 +71,28 @@ class LLMPlayer(Player):
     
     def choose_action(self, current_bet, game_state):
         prompt = self.generate_prompt(current_bet, game_state)
+        max_attempts = 3
+        
+        for attempt in range(max_attempts):
+            try:
+                response = completion(
+                    model=self.model_name,
+                    api_key=self.api_key,
+                    messages=[{"role": "user", "content": prompt}],
+                )
+                response_text = response["choices"][0]["message"]["content"]
+                #print(f"LLM raw response: {response_text}")
 
-        try:
-            response = completion(
-                model=self.model_name,
-                api_key=self.api_key,
-                messages=[{"role": "user", "content": prompt}],
-            )
-            response_text = response["choices"][0]["message"]["content"]
-            #print(f"LLM raw response: {response_text}")
-
-            action, raise_amount = self.parse_response(response_text)
-        except Exception as e:
-            print(f"Error parsing LLM response: {e}. Defaulting to FOLD.")
-            action, raise_amount = PlayerAction.FOLD, None
-
+                action, raise_amount = self.parse_response(response_text)
+                return action, raise_amount
+                
+            except Exception as e:
+                if attempt < max_attempts - 1:
+                    print(f"Error parsing LLM response (attempt {attempt+1}/{max_attempts}): {e}. Retrying...")
+                else:
+                    print(f"Error parsing LLM response after {max_attempts} attempts: {e}. Defaulting to FOLD.")
+                    action, raise_amount = PlayerAction.FOLD, None
+        
         return action, raise_amount
     
     def parse_response(self, response_text: str):

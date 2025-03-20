@@ -13,8 +13,9 @@ def test_llm_players():
         raise ValueError("OPENAI_API_KEY not found! Please check your .env file.")
     
     players = [
-        LLMPlayer("GPT-4-1", 1000, 0, "gpt-4o", OPENAI_API_KEY),
-        LLMPlayer("GPT-4-2", 1000, 1, "gpt-4o", OPENAI_API_KEY),
+        LLMPlayer("GPT-4-Bob", 1000, 0, "gpt-4o", OPENAI_API_KEY),
+        LLMPlayer("GPT-4-Ann", 1000, 1, "gpt-4o", OPENAI_API_KEY),
+        LLMPlayer("GPT-4-Joe", 1000, 2, "gpt-4o", OPENAI_API_KEY)
     ]
 
     game = Game(players, sb=5, bb=10)
