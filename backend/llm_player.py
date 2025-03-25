@@ -69,7 +69,7 @@ class LLMPlayer(Player):
 
         return prompt_text.strip()
     
-    def choose_action(self, current_bet, game_state):
+    async def choose_action(self, current_bet, game_state):
         prompt = self.generate_prompt(current_bet, game_state)
         max_attempts = 3
         

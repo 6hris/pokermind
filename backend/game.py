@@ -1,11 +1,34 @@
-from typing import List
+from typing import List, Dict, Optional, Any
 from deck import Card, Deck, format_cards
 from player import Player, PlayerStatus, PlayerAction
 from llm_player import LLMPlayer
 from treys import Evaluator, Card as TreysCard
+import asyncio
+from enum import Enum
+
+class GameStage(Enum):
+    SETUP = "setup"
+    DEALING = "dealing"
+    PREFLOP = "pre-flop"
+    FLOP = "flop"
+    TURN = "turn"
+    RIVER = "river"
+    SHOWDOWN = "showdown"
+    HAND_COMPLETE = "hand_complete"
+
+class GameEvent(Enum):
+    GAME_STARTED = "game_started"
+    HAND_STARTED = "hand_started"
+    BLINDS_POSTED = "blinds_posted"
+    HOLE_CARDS_DEALT = "hole_cards_dealt"
+    BETTING_STARTED = "betting_started"
+    PLAYER_ACTION = "player_action"
+    COMMUNITY_CARDS_DEALT = "community_cards_dealt"
+    HAND_COMPLETE = "hand_complete"
+    GAME_COMPLETE = "game_complete"
 
 class Game:
-    def __init__(self, players: List[Player], sb: int, bb: int):
+    def __init__(self, players: List[Player], sb: int, bb: int, callback=None):
         self.players = players
         self.sb = sb
         self.bb = bb
@@ -18,7 +41,14 @@ class Game:
         self.last_raise = bb
         self.evaluator = Evaluator()
         self.hand_context = []
-
+        self.current_stage = GameStage.SETUP
+        self.callback = callback
+        self.hand_number = 0
+        
+    async def emit_event(self, event_type: GameEvent, data: Dict[str, Any]):
+        """Emit game events through the callback if provided"""
+        if self.callback:
+            await self.callback(event_type.value, data)
     
     def set_player_positions(self):
         num_players = len(self.players)
@@ -36,27 +66,55 @@ class Game:
         self.dealer_pos = (self.dealer_pos + 1) % len(self.players)
         self.set_player_positions()
 
-    def deal_hole_cards(self):
+    async def deal_hole_cards(self):
         for player in self.players:
             if player.status != PlayerStatus.OUT:
                 player.recieve_cards(self.deck.deal(2))
+        
+        # Emit event with hole cards for each player
+        await self.emit_event(GameEvent.HOLE_CARDS_DEALT, {
+            "players": [
+                {
+                    "name": p.name, 
+                    "hole_cards": format_cards(p.hand) if p.hand else ""
+                } 
+                for p in self.players
+            ]
+        })
     
-    def post_blinds(self):
+    async def post_blinds(self):
         num_players = len(self.players)
 
         # small blind
-        sb_bet = self.players[(self.dealer_pos + 1) % num_players].place_bet(self.sb)
+        sb_player = self.players[(self.dealer_pos + 1) % num_players]
+        sb_bet = sb_player.place_bet(self.sb)
         self.pot += sb_bet
 
         # big blind
-        bb_bet = self.players[(self.dealer_pos + 2) % num_players].place_bet(self.bb)
+        bb_player = self.players[(self.dealer_pos + 2) % num_players]
+        bb_bet = bb_player.place_bet(self.bb)
         self.pot += bb_bet
 
         self.current_bet = self.bb
+        
+        await self.emit_event(GameEvent.BLINDS_POSTED, {
+            "sb_player": sb_player.name,
+            "sb_amount": sb_bet,
+            "bb_player": bb_player.name,
+            "bb_amount": bb_bet,
+            "pot": self.pot
+        })
     
-    def deal_community_cards(self, count):
+    async def deal_community_cards(self, count, stage: GameStage):
         self.deck.burn()
-        self.community_cards.extend(self.deck.deal(count))
+        new_cards = self.deck.deal(count)
+        self.community_cards.extend(new_cards)
+        
+        await self.emit_event(GameEvent.COMMUNITY_CARDS_DEALT, {
+            "stage": stage.value,
+            "new_cards": format_cards(new_cards),
+            "all_cards": format_cards(self.community_cards)
+        })
     
     def get_starting_player_index(self, round_type):
         if round_type == "pre-flop":
@@ -71,7 +129,12 @@ class Game:
         
         return -1 
 
-    def betting_round(self, round_type):
+    async def betting_round(self, round_type):
+        await self.emit_event(GameEvent.BETTING_STARTED, {
+            "round": round_type,
+            "current_bet": self.current_bet,
+        })
+        
         start_idx = self.get_starting_player_index(round_type)
 
         if start_idx == -1 or len([p for p in self.players if p.status != PlayerStatus.FOLDED]) <= 1:
@@ -96,45 +159,70 @@ class Game:
                 player = self.players[curr_idx]
                 if (player.status != PlayerStatus.FOLDED and player.chips > 0 and (player.current_bet < self.current_bet or self.current_bet == 0)):
                     if isinstance(player, LLMPlayer):
-                        action, amount = player.choose_action(self.current_bet, self.get_player_context(player))
+                        action, amount = await player.choose_action(self.current_bet, self.get_player_context(player))
                     else:
                         action, amount = player.choose_action(self.current_bet)
                     
-                    print(f"{player.name} {action.value}")
+                    action_result = {
+                        "player": player.name,
+                        "action": action.value,
+                        "amount": 0
+                    }
+                    
                     if action == PlayerAction.FOLD:
                         self.hand_context.append(f"{player.name} FOLDS")
                         player.fold()
+                        print(f"{player.name} {action.value}")
                     elif action == PlayerAction.CHECK:
-                        #print(f"{player.name} checks")
                         self.hand_context.append(f"{player.name} checks")
-                        pass
+                        print(f"{player.name} {action.value}")
                     elif action == PlayerAction.CALL:
                         call_amount = self.current_bet - player.current_bet
                         actual_bet = player.place_bet(call_amount)
-                        #print(f"{player.name} calls {actual_bet}")
+                        action_result["amount"] = actual_bet
                         self.hand_context.append(f"{player.name} calls {actual_bet}")
+                        print(f"{player.name} {action.value} {actual_bet}")
                     elif action == PlayerAction.BET:
                         changed_bet = True
                         bet_amount = max(self.min_bet, amount)
                         actual_bet = player.place_bet(bet_amount)
+                        action_result["amount"] = actual_bet
                         self.last_raise = bet_amount
                         self.current_bet = player.current_bet
-                        #print(f"{player.name} bets {actual_bet}")
                         self.hand_context.append(f"{player.name} bets {actual_bet}")
+                        print(f"{player.name} {action.value} {actual_bet}")
                     elif action == PlayerAction.RAISE:
                         changed_bet = True
                         raise_amount = max(self.last_raise, amount)
-                        player.place_bet(raise_amount)
+                        total_bet = self.current_bet + raise_amount
+                        call_amount = self.current_bet - player.current_bet
+                        player.place_bet(call_amount + raise_amount)
+                        action_result["amount"] = call_amount + raise_amount
                         self.current_bet = player.current_bet
-                        #print(f"{player.name} raises {raise_amount}")
                         self.hand_context.append(f"{player.name} raises {raise_amount}")
+                        print(f"{player.name} {action.value} {raise_amount}")
                     elif action == PlayerAction.ALL_IN:
                         changed_bet = True
                         actual_bet = player.place_bet(player.chips)
+                        action_result["amount"] = actual_bet
                         if player.current_bet > self.current_bet:
                             self.current_bet = player.current_bet
-                        #print(f"{player.name} all-in {actual_bet}")
                         self.hand_context.append(f"{player.name} all-in {actual_bet}")
+                        print(f"{player.name} {action.value} {actual_bet}")
+                    
+                    # Emit player action event
+                    await self.emit_event(GameEvent.PLAYER_ACTION, {
+                        "player": player.name,
+                        "action": action.value,
+                        "amount": action_result["amount"],
+                        "remaining_chips": player.chips,
+                        "pot": self.pot,
+                        "current_bet": self.current_bet
+                    })
+                    
+                    # Add a small delay to make the UI feel more interactive
+                    await asyncio.sleep(0.5)
+                    
                 curr_idx = (curr_idx + 1) % num_players
         
             if not changed_bet:
@@ -203,7 +291,8 @@ class Game:
             score = ([(1,),(3,1,2)],[(3,1,3),(5,)])[len({suit for _, suit in hand}) == 1][ranks[0] - ranks[4] == 4]
         return score, ranks
 
-    def play_hand(self):
+    async def play_hand(self):
+        self.hand_number += 1
         for player in self.players:
             player.reset_for_hand()
         self.community_cards = []
@@ -211,30 +300,86 @@ class Game:
         self.deck.shuffle()
         self.rotate_dealer()
         self.hand_context = []
-        print("\n===== NEW HAND =====")
-        print(f"Dealer: {self.players[self.dealer_pos].name}")
-    
+        print(f"\n===== NEW HAND #{self.hand_number} =====")
+        
+        await self.emit_event(GameEvent.HAND_STARTED, {
+            "hand_number": self.hand_number,
+            "dealer": self.players[self.dealer_pos].name,
+            "small_blind": self.sb,
+            "big_blind": self.bb,
+            "players": [{
+                "name": p.name, 
+                "chips": p.chips, 
+                "position": p.position,
+                "is_dealer": p.is_dealer,
+                "is_sb": p.is_sb,
+                "is_bb": p.is_bb
+            } for p in self.players]
+        })
 
-        self.post_blinds()
-        self.deal_hole_cards()
+        await self.post_blinds()
+        await self.deal_hole_cards()
 
         for player in self.players:
             if player.hand:
                 print(f"{player.name}'s hand: {format_cards(player.hand)}")
 
-        for round_type, card_count in [("pre-flop", 0), ("flop", 3), ("turn", 1), ("river", 1)]:
-            self.betting_round(round_type)
-            active_players = [p for p in self.players if p.status != PlayerStatus.FOLDED]
-            if len(active_players) <= 1:
-                break
-            if card_count > 0:
-                self.deal_community_cards(card_count)
-                print(f"\n--- {round_type.capitalize()}: {format_cards(self.community_cards)} ---")
-        
+        # Pre-flop betting
+        self.current_stage = GameStage.PREFLOP
+        await self.betting_round("pre-flop")
         active_players = [p for p in self.players if p.status != PlayerStatus.FOLDED]
+        if len(active_players) <= 1:
+            await self.complete_hand()
+            return
+
+        # Flop
+        self.current_stage = GameStage.FLOP
+        await self.deal_community_cards(3, GameStage.FLOP)
+        print(f"\n--- Flop: {format_cards(self.community_cards)} ---")
+        await self.betting_round("flop")
+        active_players = [p for p in self.players if p.status != PlayerStatus.FOLDED]
+        if len(active_players) <= 1:
+            await self.complete_hand()
+            return
+
+        # Turn
+        self.current_stage = GameStage.TURN
+        await self.deal_community_cards(1, GameStage.TURN)
+        print(f"\n--- Turn: {format_cards(self.community_cards)} ---")
+        await self.betting_round("turn")
+        active_players = [p for p in self.players if p.status != PlayerStatus.FOLDED]
+        if len(active_players) <= 1:
+            await self.complete_hand()
+            return
+
+        # River
+        self.current_stage = GameStage.RIVER
+        await self.deal_community_cards(1, GameStage.RIVER)
+        print(f"\n--- River: {format_cards(self.community_cards)} ---")
+        await self.betting_round("river")
+        
+        await self.complete_hand()
+    
+    async def complete_hand(self):
+        self.current_stage = GameStage.SHOWDOWN
+        active_players = [p for p in self.players if p.status != PlayerStatus.FOLDED]
+        
+        result = {
+            "pot": self.pot,
+            "community_cards": format_cards(self.community_cards),
+            "winners": [],
+            "is_split_pot": False
+        }
+        
         if len(active_players) == 1:
             active_players[0].chips += self.pot
             print(f"\n{active_players[0].name} wins {self.pot} chips (uncontested)")
+            result["winners"] = [{
+                "name": active_players[0].name,
+                "winnings": self.pot,
+                "hand": format_cards(active_players[0].hand),
+                "description": "uncontested"
+            }]
         elif len(active_players) > 1:
             print("\n=== SHOWDOWN ===")
             scores = [(p, self.evaluate_hand(p.hand)) for p in active_players]
@@ -242,20 +387,45 @@ class Game:
             winners = [p for p, score in scores if score == best_score]
             pot_share = self.pot // len(winners) 
             
+            result["is_split_pot"] = len(winners) > 1
+            for winner in winners:
+                winner.chips += pot_share
+                result["winners"].append({
+                    "name": winner.name,
+                    "winnings": pot_share,
+                    "hand": format_cards(winner.hand),
+                    "description": "split pot" if len(winners) > 1 else "best hand"
+                })
+            
             winner_names = ", ".join(p.name for p in winners)
             if len(winners) > 1:
                 print(f"\nSplit pot ({self.pot} chips) between: {winner_names}")
             else:
                 print(f"\n{winners[0].name} wins {self.pot} chips")
 
-            for winner in winners:
-                winner.chips += pot_share
         self.pot = 0
+        
+        await self.emit_event(GameEvent.HAND_COMPLETE, result)
+        self.current_stage = GameStage.HAND_COMPLETE
 
-
-
-    
-
-
-
-    
+    async def play_game(self, num_hands):
+        """Play a specific number of hands"""
+        for i in range(num_hands):
+            await self.play_hand()
+            
+            # Check if there's only one player with chips left
+            players_with_chips = [p for p in self.players if p.chips > 0]
+            if len(players_with_chips) <= 1:
+                break
+        
+        # Game complete
+        await self.emit_event(GameEvent.GAME_COMPLETE, {
+            "hands_played": self.hand_number,
+            "players": [{
+                "name": p.name,
+                "chips": p.chips,
+                "is_winner": p.chips > 0
+            } for p in self.players]
+        })
+        
+        return self.players
