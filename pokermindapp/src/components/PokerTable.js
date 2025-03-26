@@ -8,7 +8,7 @@ export default function PokerTable({ models, userIsPlaying }) {
   // Circle geometry
   const centerX = 200;  // half of 400px
   const centerY = 100;  // half of 200px
-  const radius = 70;
+  const radius = 250;
 
   // Each seat's (x,y)
   const seatPositions = Array.from({ length: totalPlayers }, (_, i) => {

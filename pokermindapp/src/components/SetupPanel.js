@@ -15,7 +15,7 @@ export default function SetupPanel({
   onStartGame
 }) {
   // Example model names and a small color palette
-  const availableModels = ['GPT4o', 'GPT-3.5', 'CustomModel'];
+  const availableModels = ['gpt-4o', 'gpt-3.5', 'CustomModel'];
   const colorPalette = ['red', 'blue', 'green', 'orange', 'purple', 'magenta'];
 
   // Track the currently selected model from the dropdown

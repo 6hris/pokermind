@@ -1,5 +1,4 @@
-// App.js
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import SetupPanel from './components/SetupPanel';
 import PokerTable from './components/PokerTable';
 import MessageLog from './components/MessageLog';
@@ -14,17 +13,68 @@ function App() {
 
   // NEW: Store the array of selected models in the parent
   const [modelsInGame, setModelsInGame] = useState([]);
+  const [gameId, setGameId] = useState(null);
+  const [gameLogs, setGameLogs] = useState([]);
 
   // Called when user hits "Start Game." For now, just logs everything.
-  const handleStartGame = () => {
-    console.log('Starting game with:', {
-      openRouterKey,
-      rounds,
-      startingAmount,
-      playAgainstLLMs,
-      modelsInGame,
-    });
+  const handleStartGame = async () => {
+    try {
+      const response = await fetch('http://localhost:8000/games', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          small_blind: 5,
+          big_blind: 10,
+          player_stack: parseInt(startingAmount),
+          num_hands: parseInt(rounds),
+          llm_players: modelsInGame.map((modelObj, i) => ({
+            name: modelObj.name + `-${i + 1}`,
+            model: modelObj.name.toLowerCase(),
+            //api_key: openRouterKey,
+          })),
+        }),
+      });
+
+      const data = await response.json();
+      const gameId = data.game_id;
+      console.log('Game created:', gameId);
+      setGameId(gameId);
+
+      await fetch(`http://localhost:8000/games/${gameId}/start`, {
+        method: 'POST',
+      });
+
+      console.log(`Game ${gameId} started`);
+    } catch (error) {
+      console.error('Failed to start game:', error);
+    }
   };
+
+  useEffect(() => {
+    if (!gameId) return;
+
+    const ws = new WebSocket(`ws://localhost:8000/ws/games/${gameId}`);
+
+    ws.onmessage = (event) => {
+      const message = JSON.parse(event.data);
+      console.log(`[${message.event}]`, message.data);
+      setGameLogs((prevLogs) => [...prevLogs, { type: message.event, data: message.data }]);
+    };
+
+    ws.onerror = (error) => {
+      console.error('WebSocket error:', error);
+    };
+
+    ws.onclose = () => {
+      console.log('WebSocket closed');
+    };
+
+    return () => {
+      ws.close();
+    };
+  }, [gameId]);
 
   return (
     <div className="App">
@@ -63,7 +113,7 @@ function App() {
           userIsPlaying={playAgainstLLMs}
         />
 
-        <MessageLog />
+        <MessageLog logs={gameLogs} />
       </div>
     </div>
   );
