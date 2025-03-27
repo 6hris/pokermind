@@ -12,11 +12,14 @@ export default function SetupPanel({
   setPlayAgainstLLMs,
   modelsInGame,
   setModelsInGame,
+  gameSpeed,
+  setGameSpeed,
   onStartGame
 }) {
   // Example model names and a small color palette
   const availableModels = ['gpt-4o', 'gpt-3.5', 'CustomModel'];
   const colorPalette = ['red', 'blue', 'green', 'orange', 'purple', 'magenta'];
+  const gameSpeedOptions = ['fast', 'medium', 'slow'];
 
   // Track the currently selected model from the dropdown
   const [selectedModel, setSelectedModel] = useState(availableModels[0]);
@@ -139,6 +142,24 @@ export default function SetupPanel({
           value={startingAmount}
           onChange={(e) => setStartingAmount(e.target.value)}
         />
+        
+        <label>Game Speed:</label>
+        <select 
+          value={gameSpeed}
+          onChange={(e) => setGameSpeed(e.target.value)}
+          style={{ marginBottom: '15px' }}
+        >
+          {gameSpeedOptions.map(speed => (
+            <option key={speed} value={speed}>
+              {speed.charAt(0).toUpperCase() + speed.slice(1)} {/* Capitalize first letter */}
+            </option>
+          ))}
+        </select>
+        <div style={{ fontSize: '0.8em', marginTop: '-12px', color: '#666', textAlign: 'left' }}>
+          {gameSpeed === 'fast' && 'Faster gameplay with minimal delays'}
+          {gameSpeed === 'medium' && 'Balanced gameplay with moderate delays'}
+          {gameSpeed === 'slow' && 'Slower gameplay with longer delays between actions'}
+        </div>
       </div>
 
       <button onClick={handleStartGameClick}>Start Game</button>

@@ -1,5 +1,33 @@
 import React, { useEffect, useRef } from 'react';
 
+// Helper function to format card strings for better display
+function formatCardString(cardStr) {
+  if (!cardStr) return '';
+  
+  return cardStr.trim().split(/\s+/).map(card => {
+    // Handle special case for 'T' (10)
+    if (card.startsWith('T')) {
+      const suit = card.charAt(1);
+      const suitSymbol = {
+        'h': '♥', 'd': '♦', 'c': '♣', 's': '♠'
+      }[suit] || suit;
+      return `10${suitSymbol}`;
+    }
+    
+    // Regular card formatting
+    if (card.length >= 2) {
+      const value = card.charAt(0);
+      const suit = card.charAt(1);
+      const suitSymbol = {
+        'h': '♥', 'd': '♦', 'c': '♣', 's': '♠'
+      }[suit] || suit;
+      return `${value}${suitSymbol}`;
+    }
+    
+    return card;
+  }).join(' ');
+}
+
 function summarizeLogEntry(type, data) {
   switch (type.toUpperCase()) {
     case "HAND_STARTED":
@@ -8,17 +36,17 @@ function summarizeLogEntry(type, data) {
       return `💰 Blinds posted - SB: ${data.sb_player} (${data.sb_amount}), BB: ${data.bb_player} (${data.bb_amount})`;
     case "HOLE_CARDS_DEALT":
       return data.players
-        .map((p) => `🂠 ${p.name}'s cards: ${p.hole_cards}`)
+        .map((p) => `🂠 ${p.name}'s cards: ${formatCardString(p.hole_cards)}`)
         .join('\\n');
     case "BETTING_STARTED":
       return `♠️ Betting started - Round: ${data.round}, Current Bet: ${data.current_bet}`;
     case "PLAYER_ACTION":
       return `🎲 ${data.player} ${data.action}${data.amount ? ' ' + data.amount + ' chips' : ''}`;
     case "COMMUNITY_CARDS_DEALT":
-      return `🃏 ${data.stage.toUpperCase()} dealt: ${data.new_cards}`;
+      return `🃏 ${data.stage.toUpperCase()} dealt: ${formatCardString(data.new_cards)}`;
     case "HAND_COMPLETE":
       return data.winners
-        .map((w) => `🏆 ${w.name} wins ${w.winnings} chips (${w.description})`)
+        .map((w) => `🏆 ${w.name} wins ${w.winnings} chips with ${formatCardString(w.hand)} (${w.description})`)
         .join('\\n');
     case "GAME_COMPLETE":
       return (
@@ -33,7 +61,7 @@ function summarizeLogEntry(type, data) {
   }
 }
 
-export default function MessageLog({ logs }) {
+export default function MessageLog({ logs = [] }) {
   const logEndRef = useRef(null);
 
   useEffect(() => {

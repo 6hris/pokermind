@@ -28,7 +28,10 @@ class GameEvent(Enum):
     GAME_COMPLETE = "game_complete"
 
 class Game:
-    def __init__(self, players: List[Player], sb: int, bb: int, callback=None):
+    def __init__(self, players: List[Player], sb: int, bb: int, callback=None, 
+                 delay_between_actions: float = 1.0,
+                 delay_between_stages: float = 2.0,
+                 delay_after_hand: float = 3.0):
         self.players = players
         self.sb = sb
         self.bb = bb
@@ -44,6 +47,11 @@ class Game:
         self.current_stage = GameStage.SETUP
         self.callback = callback
         self.hand_number = 0
+        
+        # Game speed controls (in seconds)
+        self.delay_between_actions = delay_between_actions
+        self.delay_between_stages = delay_between_stages
+        self.delay_after_hand = delay_after_hand
         
     async def emit_event(self, event_type: GameEvent, data: Dict[str, Any]):
         """Emit game events through the callback if provided"""
@@ -67,9 +75,14 @@ class Game:
         self.set_player_positions()
 
     async def deal_hole_cards(self):
+        # Pause before dealing cards
+        await asyncio.sleep(self.delay_between_stages)
+        
         for player in self.players:
             if player.status != PlayerStatus.OUT:
                 player.recieve_cards(self.deck.deal(2))
+                # Small delay between each player getting cards for visual effect
+                await asyncio.sleep(0.2)
         
         # Emit event with hole cards for each player
         await self.emit_event(GameEvent.HOLE_CARDS_DEALT, {
@@ -81,6 +94,9 @@ class Game:
                 for p in self.players
             ]
         })
+        
+        # Give time for players to see their cards
+        await asyncio.sleep(self.delay_between_stages)
     
     async def post_blinds(self):
         num_players = len(self.players)
@@ -106,6 +122,9 @@ class Game:
         })
     
     async def deal_community_cards(self, count, stage: GameStage):
+        # Pause before dealing community cards
+        await asyncio.sleep(self.delay_between_stages)
+        
         self.deck.burn()
         new_cards = self.deck.deal(count)
         self.community_cards.extend(new_cards)
@@ -115,6 +134,9 @@ class Game:
             "new_cards": format_cards(new_cards),
             "all_cards": format_cards(self.community_cards)
         })
+        
+        # Give time for players to see the new community cards
+        await asyncio.sleep(self.delay_between_stages)
     
     def get_starting_player_index(self, round_type):
         if round_type == "pre-flop":
@@ -220,8 +242,8 @@ class Game:
                         "current_bet": self.current_bet
                     })
                     
-                    # Add a small delay to make the UI feel more interactive
-                    await asyncio.sleep(0.5)
+                    # Add a delay between player actions for better UI experience
+                    await asyncio.sleep(self.delay_between_actions)
                     
                 curr_idx = (curr_idx + 1) % num_players
         
@@ -407,6 +429,9 @@ class Game:
         
         await self.emit_event(GameEvent.HAND_COMPLETE, result)
         self.current_stage = GameStage.HAND_COMPLETE
+        
+        # Add a longer delay after hand completion to let users process the results
+        await asyncio.sleep(self.delay_after_hand)
 
     async def play_game(self, num_hands):
         """Play a specific number of hands"""

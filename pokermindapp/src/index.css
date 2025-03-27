@@ -5,9 +5,46 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background-color: #f5f5f5;
 }
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
+}
+
+.table-container {
+  margin: 20px auto;
+  position: relative;
+  overflow: hidden;
+}
+
+.poker-table {
+  position: relative;
+  z-index: 1;
+}
+
+.player-seat {
+  transition: all 0.3s ease;
+}
+
+.player-seat:hover {
+  transform: translate(-50%, -50%) scale(1.05);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+}
+
+/* Card animations */
+@keyframes dealCard {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.card {
+  animation: dealCard 0.3s ease-out;
 }

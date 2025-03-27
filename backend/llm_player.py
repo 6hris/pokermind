@@ -28,8 +28,10 @@ class LLMPlayer(Player):
     def generate_prompt(self, current_bet, game_state):
         game_history = "\n".join(game_state['actions_so_far'])
         hole_cards_str = "".join([card.to_treys_str() for card in self.hand])
+        call_amount = max(0, current_bet - self.current_bet)
+        
         prompt_text = f"""
-        You are an expert-level poker AI tasked with making optimal decisions in a poker game. Your job is to WIN! WIN! You will be given the current game state and your goal is to determine the best action to take.
+        You are an expert-level poker AI tasked with making optimal decisions in a poker game. Your job is to WIN! You will be given the current game state and your goal is to determine the best action to take.
 
         Here's the current game state:
 
@@ -38,19 +40,45 @@ class LLMPlayer(Player):
         Your Hole Cards: {hole_cards_str}
         Community Cards: {game_state['community_cards']}
         Pot: {game_state['pot']}
-        Chips: {self.chips}
-        Amount to call: {max(0, current_bet - self.current_bet)}
+        Your Chips: {self.chips}
+        Amount to call: {call_amount}
         Minimum raise over current bet: {game_state['min_raise']}
+        Current bet to match: {current_bet}
 
-        CRITICAL INSTRUCTIONS:
-        - Determine optimal action: fold, call, or raise ONLY.
-        - If raising, provide an appropriate raise amount.
-        - You MUST output ONLY a valid JSON object with no other text.
-        - The action field MUST be one of: "fold", "call", or "raise".
-        - If action is "raise", raise_amount must be an integer > 0.
-        - If action is "fold" or "call", raise_amount must be null.
+        RESPONSE FORMAT REQUIREMENTS:
+        You MUST respond with ONLY a valid JSON object in the following exact format:
 
-        VALID OUTPUT EXAMPLES:
+        For folding:
+        {{
+          "action": "fold",
+          "raise_amount": null
+        }}
+
+        For calling:
+        {{
+          "action": "call",
+          "raise_amount": null
+        }}
+
+        For raising:
+        {{
+          "action": "raise",
+          "raise_amount": [your raise amount as integer]
+        }}
+
+        CRITICAL RULES:
+        1. Output ONLY the JSON object - no explanations, thoughts, or other text
+        2. Only use actions "fold", "call", or "raise" (lowercase only)
+        3. If action is "raise", raise_amount must be a positive integer (minimum {game_state['min_raise']})
+        4. If action is "fold" or "call", raise_amount MUST be null (not a number)
+        5. Do not use any other fields in your JSON response
+
+        EXAMPLE VALID RESPONSES:
+        {{
+          "action": "fold",
+          "raise_amount": null
+        }}
+
         {{
           "action": "call",
           "raise_amount": null
@@ -61,55 +89,98 @@ class LLMPlayer(Player):
           "raise_amount": 50
         }}
 
-        {{
-          "action": "fold",
-          "raise_amount": null
-        }}
+        Any deviation from this exact format will cause errors. Respond with JSON only.
         """
 
         return prompt_text.strip()
     
     async def choose_action(self, current_bet, game_state):
-        prompt = self.generate_prompt(current_bet, game_state)
+        original_prompt = self.generate_prompt(current_bet, game_state)
         max_attempts = 3
+        prompt = original_prompt
+        error_context = ""
         
         for attempt in range(max_attempts):
             try:
+                messages = [{"role": "user", "content": prompt}]
+                
                 response = completion(
                     model=self.model_name,
                     api_key=self.api_key,
-                    messages=[{"role": "user", "content": prompt}],
+                    messages=messages,
                 )
                 response_text = response["choices"][0]["message"]["content"]
-                #print(f"LLM raw response: {response_text}")
+                print(f"{self.name} raw response: {response_text}")
 
                 action, raise_amount = self.parse_response(response_text)
                 return action, raise_amount
                 
             except Exception as e:
+                error_message = str(e)
                 if attempt < max_attempts - 1:
-                    print(f"Error parsing LLM response (attempt {attempt+1}/{max_attempts}): {e}. Retrying...")
+                    print(f"Error parsing {self.name}'s response (attempt {attempt+1}/{max_attempts}): {error_message}. Retrying...")
+                    
+                    # Add error feedback to the prompt for the next attempt
+                    error_context += f"\nYour previous response failed validation: {error_message}\n"
+                    error_context += "Please correct your response to match EXACTLY one of the valid formats shown above.\n"
+                    error_context += "Remember: The action MUST be 'fold', 'call', or 'raise' with correct raise_amount handling.\n"
+                    
+                    # Create a new prompt with error feedback
+                    prompt = original_prompt + "\n" + error_context
                 else:
-                    print(f"Error parsing LLM response after {max_attempts} attempts: {e}. Defaulting to FOLD.")
+                    print(f"Error parsing {self.name}'s response after {max_attempts} attempts: {error_message}. Defaulting to FOLD.")
                     action, raise_amount = PlayerAction.FOLD, None
         
         return action, raise_amount
     
     def parse_response(self, response_text: str):
+        # First, try to find a JSON object with regex
         json_match = re.search(r"\{.*?\}", response_text, re.DOTALL)
-
+        
         if not json_match:
-            raise ValueError("LLM response did not contain any JSON content.")
+            # If no JSON found, check if there are simple keywords we can use
+            if "fold" in response_text.lower():
+                return PlayerAction.FOLD, None
+            elif "call" in response_text.lower():
+                return PlayerAction.CALL, None
+            else:
+                raise ValueError("LLM response did not contain any JSON content or recognizable action keywords.")
 
         json_str = json_match.group()
-
+        
+        # Clean up potential JSON formatting issues
+        json_str = json_str.replace("'", "\"")
+        
         try:
             response_json = json.loads(json_str)
+            
+            # Add basic validation if fields are missing
+            if "action" not in response_json:
+                raise ValueError("Missing 'action' field in response")
+            
+            # Normalize action field (lowercase, trim whitespace)
+            if isinstance(response_json["action"], str):
+                response_json["action"] = response_json["action"].lower().strip()
+            
+            # Check for raise with missing raise_amount and try to fix
+            if response_json["action"] == "raise" and "raise_amount" not in response_json:
+                # Look for a number in the response
+                amount_match = re.search(r"\d+", response_text)
+                if amount_match:
+                    response_json["raise_amount"] = int(amount_match.group())
+                else:
+                    raise ValueError("Action is 'raise' but no raise_amount provided")
+            
+            # Run through proper validation
             validated_response = PokerActionResponse.validate_action(response_json)
+            
+            action = PlayerAction(validated_response.action.lower())
+            raise_amount = validated_response.raise_amount
+            
+            return action, raise_amount
+            
         except (json.JSONDecodeError, ValidationError, ValueError) as e:
             raise ValueError(f"LLM response validation error: {e}")
-
-        action = PlayerAction(validated_response.action.lower())
-        raise_amount = validated_response.raise_amount
-
-        return action, raise_amount
+        
+        except Exception as e:
+            raise ValueError(f"Unexpected error parsing LLM response: {e}")

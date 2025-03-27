@@ -1,7 +1,7 @@
 import os
 import asyncio
 import uuid
-from typing import Dict, List, Any, Optional
+from typing import Dict, List, Any, Optional, ClassVar
 from dotenv import load_dotenv
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect, HTTPException, Body
 from fastapi.middleware.cors import CORSMiddleware
@@ -36,6 +36,14 @@ class GameConfig(BaseModel):
     player_stack: int = Field(..., gt=0, description="Starting chips for each player")
     num_hands: int = Field(..., gt=0, description="Number of hands to play")
     llm_players: List[Dict[str, str]] = Field(..., description="List of LLM players to add to the game")
+    game_speed: str = Field(default="medium", description="Game speed: fast, medium, slow")
+    
+    # Game speed presets (in seconds) - using ClassVar to indicate this is not a field
+    speed_presets: ClassVar[Dict[str, Dict[str, float]]] = {
+        "fast": {"action": 0.5, "stage": 1.0, "hand": 1.5},
+        "medium": {"action": 1.5, "stage": 2.5, "hand": 4.0},  
+        "slow": {"action": 3.0, "stage": 5.0, "hand": 7.0}
+    }
 
 class GameManager:
     def __init__(self):
@@ -69,11 +77,21 @@ class GameManager:
                 for client in connected_clients[game_id]:
                     await client.send_json(event_data)
         
+        # Get game speed parameters
+        speed = config.game_speed.lower()
+        if speed not in config.speed_presets:
+            speed = "medium"  # Default to medium if invalid
+        
+        speed_params = config.speed_presets[speed]
+        
         game = Game(
             players=players,
             sb=config.small_blind,
             bb=config.big_blind,
-            callback=game_callback
+            callback=game_callback,
+            delay_between_actions=speed_params["action"],
+            delay_between_stages=speed_params["stage"],
+            delay_after_hand=speed_params["hand"]
         )
         
         # Store game and configuration

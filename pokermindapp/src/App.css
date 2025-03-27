@@ -3,74 +3,142 @@
   text-align: center;
 }
 
+header {
+  background-color: #1a1a1a;
+  color: white;
+  padding: 10px 0;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
 .container {
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
   padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
 .settings {
-  width: 30%;
+  width: 25%;
+  background-color: white;
+  border-radius: 8px;
+  padding: 15px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
 .table {
-  width: 40%;
+  width: 45%;
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
-/* 1) Table container is fixed at 400x200 and anchors seat positions */
+/* Table container */
 .table-container {
-  position: relative;    /* so .player-seat uses this as its parent for absolute positioning */
-  width: 400px;
-  height: 200px;
-  margin: 0 auto;        /* optional: center horizontally within the .table div */
+  position: relative;  
+  width: 600px;
+  height: 400px;
+  margin: 0 auto;
+  background-color: #f0f0f0;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  overflow: hidden;
 }
 
-/* 2) Poker table now fills the container */
-.poker-table {
-  width: 100%;
-  height: 100%;
-  background-color: green;
-  border: 5px solid black;
-  border-radius: 50%;
-}
-
-/* Each seat is a small circle or icon. We'll just do a circle with text for now. */
-.player-seat {
-  position: absolute;
-  width: 40px;
-  height: 40px;
-  background-color: #fff;
-  border-radius: 50%;
-  text-align: center;
-  line-height: 40px;
-  border: 2px solid #333;
-  font-size: 0.8rem;
-  cursor: default;
-}
-
-.user-seat {
-  /* optionally some styling specifically for the user seat */
-  background-color: yellow;
-  border-color: #333;
-}
-
+/* Message log */
 .message-log {
   width: 25%;
-  border: 1px solid #ccc;
-  padding: 10px;
+  border-radius: 8px;
+  background-color: white;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  padding: 15px;
+  max-height: 600px;
+  overflow-y: auto;
 }
 
+.message-log h2 {
+  border-bottom: 1px solid #eee;
+  padding-bottom: 10px;
+  margin-top: 0;
+}
+
+.log-content {
+  text-align: left;
+}
+
+/* Setup panel */
 .input-fields {
-  margin: 10px 0;
+  margin: 15px 0;
+}
+
+.input-fields label {
+  display: block;
+  text-align: left;
+  margin-bottom: 5px;
+  font-weight: bold;
 }
 
 input[type="text"],
 input[type="number"],
 select {
   width: 100%;
-  margin: 5px 0;
-  padding: 8px;
+  margin: 5px 0 15px;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+button {
+  background-color: #2c3e50;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.3s;
+}
+
+button:hover {
+  background-color: #34495e;
+}
+
+/* Game status indicators */
+.status-badge {
+  display: inline-block;
+  padding: 5px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: bold;
+  margin: 5px;
+}
+
+.status-running {
+  background-color: #4caf50;
+  color: white;
+}
+
+.status-waiting {
+  background-color: #ff9800;
+  color: white;
+}
+
+.status-completed {
+  background-color: #2196f3;
+  color: white;
+}
+
+/* Responsive design */
+@media (max-width: 900px) {
+  .container {
+    flex-direction: column;
+  }
+  
+  .settings, .table, .message-log {
+    width: 100%;
+    margin-bottom: 20px;
+  }
 }
