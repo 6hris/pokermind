@@ -12,34 +12,37 @@ header {
 }
 
 .container {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  padding: 20px;
-  max-width: 1200px;
+  display: grid;
+  grid-template-columns: 22% 56% 22%;
+  grid-gap: 15px;
+  padding: 10px;
+  max-width: 1400px;
   margin: 0 auto;
+  height: calc(100vh - 100px); /* Use most of the viewport height */
 }
 
 .settings {
-  width: 25%;
   background-color: white;
   border-radius: 8px;
-  padding: 15px;
+  padding: 12px;
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  height: fit-content;
+  max-height: calc(100vh - 120px);
+  overflow-y: auto;
 }
 
 .table {
-  width: 45%;
   display: flex;
   justify-content: center;
   align-items: center;
+  padding: 10px;
 }
 
 /* Table container */
 .table-container {
   position: relative;  
-  width: 600px;
-  height: 400px;
+  width: 700px; /* Increased width */
+  height: 500px; /* Increased height */
   margin: 0 auto;
   background-color: #f0f0f0;
   border-radius: 8px;
@@ -49,12 +52,11 @@ header {
 
 /* Message log */
 .message-log {
-  width: 25%;
   border-radius: 8px;
   background-color: white;
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  padding: 15px;
-  max-height: 600px;
+  padding: 12px;
+  height: calc(100vh - 120px);
   overflow-y: auto;
 }
 
@@ -131,14 +133,52 @@ button:hover {
   color: white;
 }
 
+
 /* Responsive design */
-@media (max-width: 900px) {
+@media (max-width: 1200px) {
   .container {
+    grid-template-columns: 1fr 2fr;
+    grid-template-rows: auto auto;
+    grid-template-areas: 
+      "settings table"
+      "logs logs";
+  }
+  
+  .settings {
+    grid-area: settings;
+    max-height: 500px;
+  }
+  
+  .table {
+    grid-area: table;
+  }
+  
+  .message-log {
+    grid-area: logs;
+    height: 300px;
+    margin-top: 15px;
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    display: flex;
     flex-direction: column;
+    height: auto;
   }
   
   .settings, .table, .message-log {
     width: 100%;
-    margin-bottom: 20px;
+    margin-bottom: 15px;
+  }
+  
+  .table-container {
+    width: 100%;
+    max-width: 600px;
+    height: 400px;
+  }
+  
+  .message-log {
+    height: 300px;
   }
 }

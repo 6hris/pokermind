@@ -17,11 +17,11 @@ const Card = ({ card }) => {
           backgroundColor: '#f0f0f0',
           color: '#999',
           fontWeight: 'bold',
-          width: '30px',
-          height: '40px',
+          width: '25px',
+          height: '35px',
           textAlign: 'center',
           boxShadow: '1px 1px 2px rgba(0,0,0,0.2)',
-          fontSize: '0.8em'
+          fontSize: '0.75em'
         }}
       >
         <div>?</div>
@@ -30,40 +30,62 @@ const Card = ({ card }) => {
     );
   }
   
-  // Parse card string
-  let value, suit;
+  // Parse card string - handling both formats:
+  // Format 1: "Ts" (value + suit code)
+  // Format 2: "10♠" (numeric value + suit symbol)
+  let displayValue, suitSymbol;
   
-  // Special handling for 'T' which represents 10
-  if (card.charAt(0) === 'T') {
-    value = '10';
-    suit = card.charAt(1);
+  // Check if the card already contains a suit symbol
+  if (card.includes('♥') || card.includes('♦') || card.includes('♣') || card.includes('♠')) {
+    // Format 2: Card already has suit symbol
+    const suitIndex = Math.max(
+      card.indexOf('♥'), 
+      card.indexOf('♦'), 
+      card.indexOf('♣'), 
+      card.indexOf('♠')
+    );
+    
+    displayValue = card.substring(0, suitIndex);
+    suitSymbol = card.substring(suitIndex);
+    
+    // Determine color based on suit symbol
+    const color = (suitSymbol === '♥' || suitSymbol === '♦') ? 'red' : 'black';
   } else {
-    value = card.charAt(0);
-    // Handle case where value might be multi-character (although unlikely in current format)
-    suit = card.charAt(1) || '';
+    // Format 1: Traditional code format
+    let value, suit;
+    
+    // Special handling for 'T' which represents 10
+    if (card.charAt(0) === 'T') {
+      value = 'T';
+      suit = card.charAt(1);
+    } else {
+      value = card.charAt(0);
+      // Handle case where value might be multi-character
+      suit = card.charAt(1) || '';
+    }
+    
+    // Map special values to readable form
+    const valueMap = {
+      'A': 'A',
+      'K': 'K',
+      'Q': 'Q', 
+      'J': 'J',
+      'T': '10'
+    };
+    
+    displayValue = valueMap[value] || value;
+    
+    // Convert suit code to symbol
+    suitSymbol = {
+      'h': '♥',
+      'd': '♦',
+      'c': '♣',
+      's': '♠'
+    }[suit] || suit || '?';
   }
   
-  // Map special values to readable form
-  const valueMap = {
-    'A': 'A',
-    'K': 'K',
-    'Q': 'Q', 
-    'J': 'J',
-    'T': '10'
-  };
-  
-  const displayValue = valueMap[value] || value;
-  
   // Get color based on suit
-  const color = (suit === 'h' || suit === 'd') ? 'red' : 'black';
-  
-  // Get suit symbol with fallback
-  const suitSymbol = {
-    'h': '♥',
-    'd': '♦',
-    'c': '♣',
-    's': '♠'
-  }[suit] || suit || '?';
+  const color = (suitSymbol === '♥' || suitSymbol === '♦') ? 'red' : 'black';
   
   return (
     <div 
@@ -77,11 +99,11 @@ const Card = ({ card }) => {
         backgroundColor: 'white',
         color: color,
         fontWeight: 'bold',
-        width: '30px',
-        height: '40px',
+        width: '25px',
+        height: '35px',
         textAlign: 'center',
         boxShadow: '1px 1px 2px rgba(0,0,0,0.2)',
-        fontSize: '0.8em'
+        fontSize: '0.75em'
       }}
     >
       <div>{displayValue}</div>
@@ -96,15 +118,15 @@ export default function PokerTable({
   playerStates = [], 
   communityCards = '', 
   pot = 0,
-  gameStatus = 'waiting' 
+  gameStatus = 'waiting'
 }) {
   // total players = # models + 1 if user is playing
   const totalPlayers = userIsPlaying ? models.length + 1 : models.length;
 
-  // Circle geometry
-  const centerX = 300;  // half of 600px
-  const centerY = 200;  // half of 400px
-  const radius = 180;
+  // Circle geometry - centered in the container
+  const centerX = 375;  // half of 750px (container width)
+  const centerY = 320;  // half of 600px (container height)
+  const radius = 240;  // Increased radius to spread out player seats
 
   // Each seat's (x,y)
   const seatPositions = Array.from({ length: totalPlayers }, (_, i) => {
@@ -121,19 +143,20 @@ export default function PokerTable({
 
   return (
     <div className="table">
-      <div className="table-container" style={{ position: 'relative', width: '600px', height: '400px' }}>
+      <div className="table-container" style={{ position: 'relative', width: '750px', height: '600px', padding: '25px 0' }}>
         {/* The table background */}
         <div 
           className="poker-table" 
           style={{ 
             position: 'absolute',
-            width: '400px',
-            height: '200px',
+            width: '500px',
+            height: '250px',
             backgroundColor: '#076324',
-            borderRadius: '200px / 100px',
-            left: '100px',
-            top: '100px',
-            boxShadow: 'inset 0 0 20px rgba(0,0,0,0.5)',
+            borderRadius: '250px / 125px',
+            left: '50%',
+            top: '50%',
+            transform: 'translate(-50%, -50%)', // Perfect centering
+            boxShadow: 'inset 0 0 30px rgba(0,0,0,0.5)',
             border: '15px solid #542a0a',
             zIndex: 1
           }} 
@@ -144,9 +167,9 @@ export default function PokerTable({
           <div 
             style={{ 
               position: 'absolute', 
-              top: '130px', 
-              left: '50%', 
-              transform: 'translateX(-50%)',
+              top: '33%', // Positioned above the center (which is at 50%)
+              left: '50%', // Centered horizontally
+              transform: 'translate(-50%, -50%)', // Center both horizontally and vertically
               padding: '5px 10px',
               backgroundColor: 'rgba(0,0,0,0.7)',
               color: 'white',
@@ -159,49 +182,36 @@ export default function PokerTable({
           </div>
         )}
         
-        {/* Community cards */}
+        {/* Community cards - properly centered and slightly larger */}
         {commCardsArray.length > 0 && (
           <div 
             style={{ 
               position: 'absolute', 
-              top: '170px', 
-              left: '50%', 
-              transform: 'translateX(-50%)',
+              top: '50%', // Centered on the table
+              left: '50%', // Centered on the table
+              transform: 'translate(-50%, -50%)', // Center both horizontally and vertically
               display: 'flex',
-              gap: '5px',
-              zIndex: 3
+              gap: '4px', // Slightly increased gap between cards
+              zIndex: 3,
+              backgroundColor: 'rgba(7, 99, 36, 0.7)', // Semi-transparent background to highlight cards
+              padding: '6px 10px',
+              borderRadius: '8px'
             }}
           >
             {commCardsArray.map((card, idx) => (
-              <Card key={idx} card={card} />
+              <div key={idx} style={{transform: 'scale(0.95)'}}>
+                <Card card={card} />
+              </div>
             ))}
           </div>
         )}
-        
-        {/* Game status */}
-        <div 
-          style={{ 
-            position: 'absolute', 
-            top: '20px', 
-            left: '50%', 
-            transform: 'translateX(-50%)',
-            padding: '5px 10px',
-            backgroundColor: gameStatus === 'running' ? 'rgba(0, 128, 0, 0.7)' : 'rgba(128, 128, 128, 0.7)',
-            color: 'white',
-            borderRadius: '5px',
-            fontWeight: 'bold',
-            zIndex: 3
-          }}
-        >
-          {gameStatus === 'running' ? 'Game in Progress' : 'Waiting to Start'}
-        </div>
 
         {/* Player seats */}
         {seatPositions.map((pos, i) => {
           // Determine if this is a user seat or AI seat
           const isUserSeat = userIsPlaying && i === 0;
           const modelIndex = userIsPlaying ? i - 1 : i;
-          const modelObj = isUserSeat ? { name: 'You', color: '#fffcc0' } : models[modelIndex];
+          const modelObj = isUserSeat ? { name: 'You', color: '#FFFFCC' } : models[modelIndex]; // Light yellow for user
           
           if (!modelObj) return null;
           
@@ -221,12 +231,12 @@ export default function PokerTable({
                 className="player-seat"
                 style={{
                   position: 'absolute',
-                  width: '120px',
+                  width: '130px',
                   left: `${pos.x}px`,
                   top: `${pos.y}px`,
                   transform: 'translate(-50%, -50%)',
                   backgroundColor: modelObj.color,
-                  borderColor: '#333',
+                  border: '1px solid #333',
                   padding: '10px',
                   borderRadius: '10px',
                   boxShadow: '0 2px 4px rgba(0,0,0,0.3)',
@@ -244,6 +254,7 @@ export default function PokerTable({
                   {playerData?.is_sb && ' (SB)'} 
                   {playerData?.is_bb && ' (BB)'}
                 </div>
+                
                 
                 {/* Chips */}
                 {playerData && (
