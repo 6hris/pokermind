@@ -3,7 +3,7 @@ import asyncio
 import uuid
 from typing import Dict, List, Any, Optional, ClassVar
 from dotenv import load_dotenv
-from fastapi import FastAPI, WebSocket, WebSocketDisconnect, HTTPException, Body
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect, HTTPException, Body, Query
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 
@@ -11,6 +11,7 @@ from game import Game, GameEvent
 from player import Player
 from llm_player import LLMPlayer
 from deck import format_cards
+from leaderboard import LeaderboardManager
 
 # Load environment variables
 load_dotenv()
@@ -30,6 +31,9 @@ app.add_middleware(
 games = {}
 connected_clients = {}
 
+# Initialize leaderboard manager
+leaderboard_manager = LeaderboardManager()
+
 class GameConfig(BaseModel):
     small_blind: int = Field(..., gt=0, description="Small blind amount")
     big_blind: int = Field(..., gt=0, description="Big blind amount")
@@ -37,6 +41,7 @@ class GameConfig(BaseModel):
     num_hands: int = Field(..., gt=0, description="Number of hands to play")
     llm_players: List[Dict[str, str]] = Field(..., description="List of LLM players to add to the game")
     game_speed: str = Field(default="medium", description="Game speed: fast, medium, slow")
+    is_official: bool = Field(default=False, description="Whether this game's results should count towards the official leaderboard")
     
     # Game speed presets (in seconds) - using ClassVar to indicate this is not a field
     speed_presets: ClassVar[Dict[str, Dict[str, float]]] = {
@@ -49,6 +54,7 @@ class GameManager:
     def __init__(self):
         self.active_games = {}
         self.game_tasks = {}
+        self.player_chips_history = {}  # Track chips for each player after each hand
     
     def create_game(self, config: GameConfig) -> str:
         """Create a new game with the provided configuration"""
@@ -56,19 +62,58 @@ class GameManager:
         
         # Create players list with LLM players
         players = []
+        model_names = []
         for i, llm_config in enumerate(config.llm_players):
+            # Determine the correct API key based on model
+            model_name = llm_config["model"]
+            api_key = None
+            
+            # Anthropic models
+            if model_name.startswith("claude"):
+                api_key = os.getenv("ANTHROPIC_API_KEY")
+                # Add provider prefix for litellm if needed
+                #model_name = f"anthropic/{model_name}"
+            # OpenAI models
+            elif model_name.startswith("gpt"):
+                api_key = os.getenv("OPENAI_API_KEY")
+            # Add other providers as needed
+            else:
+                # Default to OpenAI
+                api_key = os.getenv("OPENAI_API_KEY")
+                
+            if not api_key:
+                raise ValueError(f"No API key found for model {model_name}")
+                
             player = LLMPlayer(
                 name=llm_config["name"],
                 chips=config.player_stack,
                 position=i,
-                model_name=llm_config["model"],
-                api_key=os.getenv("OPENAI_API_KEY")  # Get API key from environment
+                model_name=model_name,
+                api_key=api_key
             )
             players.append(player)
+            model_names.append(llm_config["model"])
         
-        # Create the game instance
+        # Initialize chips history
+        self.player_chips_history[game_id] = {
+            player.name: [config.player_stack] for player in players
+        }
+        
+        # Register game in leaderboard
+        leaderboard_manager.register_game(
+            game_id=game_id,
+            starting_chips=config.player_stack,
+            small_blind=config.small_blind,
+            big_blind=config.big_blind,
+            num_hands=config.num_hands,
+            models=model_names,
+            is_official=config.is_official
+        )
+        
+        # Create the game instance with extended callback for leaderboard tracking
         async def game_callback(event_type: str, data: Dict[str, Any]):
-            """Callback function to broadcast game events to connected clients"""
+            """Callback function to broadcast game events and track leaderboard data"""
+            # Broadcast to clients
             if game_id in connected_clients:
                 event_data = {
                     "event": event_type,
@@ -76,6 +121,54 @@ class GameManager:
                 }
                 for client in connected_clients[game_id]:
                     await client.send_json(event_data)
+            
+            # Track game data for leaderboard
+            game = self.active_games[game_id]["game"]
+            
+            # Track hand completions for leaderboard
+            if event_type == GameEvent.HAND_COMPLETE.value:
+                hand_number = game.hand_number
+                
+                # Get winners from the hand result
+                winners = data.get("winners", [])
+                winner_names = [winner["name"] for winner in winners]
+                is_split_pot = data.get("is_split_pot", False)
+                
+                # Process each player's results
+                for player in game.players:
+                    # Store current chips in history
+                    self.player_chips_history[game_id][player.name].append(player.chips)
+                    
+                    # Calculate profit/loss from this hand
+                    if len(self.player_chips_history[game_id][player.name]) >= 2:
+                        prev_chips = self.player_chips_history[game_id][player.name][-2]
+                        current_chips = player.chips
+                        profit_loss = current_chips - prev_chips
+                        
+                        # Check if player won this hand (including split pot)
+                        won_hand = player.name in winner_names
+                        
+                        # Only record for LLM players
+                        if isinstance(player, LLMPlayer):
+                            leaderboard_manager.record_hand_result(
+                                game_id=game_id,
+                                hand_number=hand_number,
+                                model_name=player.model_name,
+                                profit_loss=profit_loss,
+                                won_hand=won_hand,
+                                starting_chips=prev_chips,
+                                ending_chips=current_chips,
+                                big_blind=game.bb
+                            )
+            
+            # When game is complete, update final stats
+            elif event_type == GameEvent.GAME_COMPLETE.value:
+                final_chips = {}
+                for player in game.players:
+                    if isinstance(player, LLMPlayer):
+                        final_chips[player.model_name] = player.chips
+                
+                leaderboard_manager.complete_game(game_id, final_chips)
         
         # Get game speed parameters
         speed = config.game_speed.lower()
@@ -163,9 +256,47 @@ game_manager = GameManager()
 @app.post("/games")
 async def create_game(config: GameConfig):
     """Create a new poker game"""
+    # Force user-created games to be exhibition games by default
+    if not config.is_official:
+        pass  # Already set to false, no need to override
+    else:
+        # For security, you might want to require an admin token here in the future
+        # For now, we'll just let the is_official flag pass through
+        pass
+
     try:
         game_id = game_manager.create_game(config)
-        return {"game_id": game_id, "message": "Game created successfully"}
+        return {
+            "game_id": game_id, 
+            "message": "Game created successfully",
+            "is_official": config.is_official
+        }
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+@app.post("/admin/official-game")
+async def create_official_game(config: GameConfig):
+    """
+    Create an official game for leaderboard rankings (admin only)
+    In a production environment, this would be protected by authentication
+    """
+    # Force this to be an official game
+    config.is_official = True
+    
+    # Additional validation for official games
+    if config.num_hands < 100:
+        raise HTTPException(status_code=400, detail="Official games must have at least 100 hands")
+    
+    # Implement additional authorization checks here
+    # In a real system, you would validate an admin token
+    
+    try:
+        game_id = game_manager.create_game(config)
+        return {
+            "game_id": game_id, 
+            "message": "Official game created successfully",
+            "is_official": True
+        }
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
@@ -226,6 +357,82 @@ async def websocket_endpoint(websocket: WebSocket, game_id: str):
         # Remove client on disconnect
         if game_id in connected_clients and websocket in connected_clients[game_id]:
             connected_clients[game_id].remove(websocket)
+
+# Leaderboard API endpoints
+@app.get("/leaderboard")
+async def get_leaderboard(
+    limit: int = Query(10, ge=1, le=100, description="Number of entries to return"),
+    official_only: bool = Query(True, description="Whether to only include official games")
+):
+    """Get the current leaderboard rankings"""
+    try:
+        leaderboard = leaderboard_manager.get_leaderboard(limit=limit, official_only=official_only)
+        return {
+            "leaderboard": leaderboard,
+            "is_official": official_only
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/leaderboard/{model_name}")
+async def get_model_stats(
+    model_name: str,
+    official_only: bool = Query(True, description="Whether to only include official games")
+):
+    """Get detailed statistics for a specific model"""
+    try:
+        stats = leaderboard_manager.get_model_stats(model_name, official_only=official_only)
+        if "error" in stats:
+            raise HTTPException(status_code=404, detail=stats["error"])
+        stats["is_official"] = official_only
+        return stats
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/leaderboard/compare")
+async def compare_models(
+    model_names: List[str] = Query(None, description="List of model names to compare"),
+    official_only: bool = Query(True, description="Whether to only include official games")
+):
+    """Compare statistics between multiple models"""
+    if not model_names or len(model_names) < 2:
+        raise HTTPException(status_code=400, detail="At least two model names must be provided")
+    
+    try:
+        results = []
+        for model_name in model_names:
+            stats = leaderboard_manager.get_model_stats(model_name, official_only=official_only)
+            if "error" not in stats:
+                results.append(stats)
+        
+        if not results:
+            raise HTTPException(status_code=404, detail="No valid models found for comparison")
+        
+        return {
+            "comparison": results,
+            "is_official": official_only
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/admin/games")
+async def get_all_games(
+    limit: int = Query(50, ge=1, le=200, description="Number of games to return"),
+    include_in_progress: bool = Query(False, description="Whether to include in-progress games")
+):
+    """Get a list of all games (admin endpoint)"""
+    try:
+        games = leaderboard_manager.get_all_games(
+            limit=limit, 
+            include_in_progress=include_in_progress
+        )
+        return {"games": games}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 if __name__ == "__main__":
     import uvicorn

@@ -390,7 +390,12 @@ class Game:
             "pot": self.pot,
             "community_cards": format_cards(self.community_cards),
             "winners": [],
-            "is_split_pot": False
+            "is_split_pot": False,
+            "players": [{
+                "name": p.name,
+                "chips": p.chips,
+                "status": p.status.value
+            } for p in self.players]
         }
         
         if len(active_players) == 1:
