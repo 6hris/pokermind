@@ -9,16 +9,52 @@ header {
   padding: 10px 0;
   margin-bottom: 20px;
   box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.navigation-tabs {
+  display: flex;
+  margin-top: 10px;
+  border-bottom: 1px solid #333;
+  width: 300px;
+}
+
+.nav-tab {
+  background-color: transparent;
+  color: #aaa;
+  border: none;
+  padding: 10px 20px;
+  margin: 0 5px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border-bottom: 3px solid transparent;
+}
+
+.nav-tab:hover {
+  color: white;
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.nav-tab.active {
+  color: white;
+  border-bottom: 3px solid #3498db;
+  font-weight: bold;
 }
 
 .container {
-  display: grid;
-  grid-template-columns: 22% 56% 22%;
-  grid-gap: 15px;
   padding: 10px;
   max-width: 1400px;
   margin: 0 auto;
-  height: calc(100vh - 100px); /* Use most of the viewport height */
+  min-height: calc(100vh - 140px);
+}
+
+/* Grid layout for game view */
+.container > .game-view {
+  display: grid;
+  grid-template-columns: 22% 56% 22%;
+  grid-gap: 15px;
 }
 
 .settings {
@@ -136,7 +172,7 @@ button:hover {
 
 /* Responsive design */
 @media (max-width: 1200px) {
-  .container {
+  .container > .game-view {
     grid-template-columns: 1fr 2fr;
     grid-template-rows: auto auto;
     grid-template-areas: 
@@ -161,10 +197,9 @@ button:hover {
 }
 
 @media (max-width: 768px) {
-  .container {
+  .container > .game-view {
     display: flex;
     flex-direction: column;
-    height: auto;
   }
   
   .settings, .table, .message-log {
@@ -180,5 +215,29 @@ button:hover {
   
   .message-log {
     height: 300px;
+  }
+  
+  /* Leaderboard responsive adjustments */
+  .leaderboard-container {
+    padding: 10px;
+  }
+  
+  .leaderboard-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .leaderboard-controls {
+    margin-top: 10px;
+    width: 100%;
+    justify-content: space-between;
+  }
+  
+  .stats-summary, .breakdown-cards {
+    flex-direction: column;
+  }
+  
+  .stat-card, .breakdown-card {
+    margin: 5px 0;
   }
 }
