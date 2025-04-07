@@ -16,7 +16,11 @@ export default function SetupPanel({
   setGameSpeed,
   onStartGame,
   gameStatus,
-  gameCompleted
+  gameCompleted,
+  isLeaderboardMode,
+  setIsLeaderboardMode,
+  savedSettings,
+  setSavedSettings
 }) {
   // Model names that are supported by the backend and tracked in the leaderboard
   const availableModels = ['gpt-4o', 'claude-3-5-sonnet-20240620'];
@@ -33,6 +37,13 @@ export default function SetupPanel({
   // Track the currently selected model from the dropdown
   const [selectedModel, setSelectedModel] = useState(availableModels[0]);
   const [showModelDropdown, setShowModelDropdown] = useState(false);
+  
+  // Leaderboard mode default settings
+  const leaderboardDefaults = {
+    rounds: '100',
+    startingAmount: '1000',
+    gameSpeed: 'medium'
+  };
 
   // Get a unique color from the palette to ensure no two players have the same color
   const getUniqueColor = () => {
@@ -105,6 +116,32 @@ export default function SetupPanel({
   const handleStartGameClick = () => {
     onStartGame();
   };
+  
+  // Handle toggling leaderboard mode
+  const handleLeaderboardModeToggle = (e) => {
+    const isChecked = e.target.checked;
+    
+    if (isChecked) {
+      // Save current settings before switching to leaderboard mode
+      setSavedSettings({
+        rounds,
+        startingAmount,
+        gameSpeed
+      });
+      
+      // Apply leaderboard default settings
+      setRounds(leaderboardDefaults.rounds);
+      setStartingAmount(leaderboardDefaults.startingAmount);
+      setGameSpeed(leaderboardDefaults.gameSpeed);
+    } else {
+      // Restore previous settings when disabling leaderboard mode
+      if (savedSettings.rounds) setRounds(savedSettings.rounds);
+      if (savedSettings.startingAmount) setStartingAmount(savedSettings.startingAmount);
+      if (savedSettings.gameSpeed) setGameSpeed(savedSettings.gameSpeed);
+    }
+    
+    setIsLeaderboardMode(isChecked);
+  };
 
   return (
     <div className="settings">
@@ -174,6 +211,54 @@ export default function SetupPanel({
           Play against LLMs?
         </label>
       </div>
+      
+      {/* Leaderboard Mode Toggle */}
+      <div className="leaderboard-mode" style={{ 
+        marginTop: '10px', 
+        marginBottom: '10px',
+        padding: '10px',
+        backgroundColor: isLeaderboardMode ? '#f0f8ff' : 'transparent',
+        border: isLeaderboardMode ? '1px solid #007bff' : 'none',
+        borderRadius: '5px'
+      }}>
+        <label style={{ 
+          opacity: controlsDisabled ? 0.6 : 1,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          fontWeight: 'bold'
+        }}>
+          <span>
+            <input
+              type="checkbox"
+              checked={isLeaderboardMode}
+              onChange={handleLeaderboardModeToggle}
+              disabled={controlsDisabled}
+              style={{ marginRight: '8px' }}
+            />
+            Leaderboard Mode
+          </span>
+          {isLeaderboardMode && <span style={{ 
+            fontSize: '12px', 
+            backgroundColor: '#007bff', 
+            color: 'white', 
+            padding: '2px 6px', 
+            borderRadius: '10px',
+            marginLeft: '10px'
+          }}>Official</span>}
+        </label>
+        
+        {isLeaderboardMode && (
+          <div style={{ 
+            fontSize: '0.85em', 
+            color: '#555', 
+            marginTop: '5px',
+            paddingLeft: '22px'
+          }}>
+            Games in leaderboard mode use standardized settings and count toward official rankings.
+          </div>
+        )}
+      </div>
 
       <div className="input-fields">
         <label style={{ opacity: controlsDisabled ? 0.6 : 1 }}>Enter OpenRouter Key:</label>
@@ -190,18 +275,34 @@ export default function SetupPanel({
           type="number"
           value={rounds}
           onChange={(e) => setRounds(e.target.value)}
-          disabled={controlsDisabled}
-          style={{ opacity: controlsDisabled ? 0.6 : 1 }}
+          disabled={controlsDisabled || isLeaderboardMode}
+          style={{ 
+            opacity: controlsDisabled || isLeaderboardMode ? 0.6 : 1,
+            backgroundColor: isLeaderboardMode ? '#f5f5f5' : 'white'
+          }}
         />
+        {isLeaderboardMode && (
+          <div style={{ fontSize: '0.8em', color: '#666', marginTop: '-10px', marginBottom: '10px' }}>
+            Fixed value for leaderboard games (min 100 rounds)
+          </div>
+        )}
 
         <label style={{ opacity: controlsDisabled ? 0.6 : 1 }}>Starting Amounts ($):</label>
         <input
           type="number"
           value={startingAmount}
           onChange={(e) => setStartingAmount(e.target.value)}
-          disabled={controlsDisabled}
-          style={{ opacity: controlsDisabled ? 0.6 : 1 }}
+          disabled={controlsDisabled || isLeaderboardMode}
+          style={{ 
+            opacity: controlsDisabled || isLeaderboardMode ? 0.6 : 1,
+            backgroundColor: isLeaderboardMode ? '#f5f5f5' : 'white'
+          }}
         />
+        {isLeaderboardMode && (
+          <div style={{ fontSize: '0.8em', color: '#666', marginTop: '-10px', marginBottom: '10px' }}>
+            Fixed value for fair comparison
+          </div>
+        )}
         
         <label style={{ opacity: controlsDisabled ? 0.6 : 1 }}>Game Speed:</label>
         <select 
@@ -209,9 +310,10 @@ export default function SetupPanel({
           onChange={(e) => setGameSpeed(e.target.value)}
           style={{ 
             marginBottom: '15px',
-            opacity: controlsDisabled ? 0.6 : 1
+            opacity: controlsDisabled || isLeaderboardMode ? 0.6 : 1,
+            backgroundColor: isLeaderboardMode ? '#f5f5f5' : 'white'
           }}
-          disabled={controlsDisabled}
+          disabled={controlsDisabled || isLeaderboardMode}
         >
           {gameSpeedOptions.map(speed => (
             <option key={speed} value={speed}>
@@ -232,15 +334,36 @@ export default function SetupPanel({
         </div>
       </div>
 
+      {/* Leaderboard mode info/warning */}
+      {isLeaderboardMode && (
+        <div style={{
+          marginTop: '10px',
+          marginBottom: '15px',
+          padding: '8px 12px',
+          backgroundColor: '#fffaf0',
+          border: '1px solid #ffd700',
+          borderRadius: '4px',
+          fontSize: '0.9em'
+        }}>
+          <strong>Leaderboard Mode Enabled:</strong> This game's results will be recorded in the official rankings.
+          Games require {leaderboardDefaults.rounds} hands minimum and use standardized settings for fair comparison.
+        </div>
+      )}
+      
       <button 
         onClick={handleStartGameClick} 
         style={{
-          backgroundColor: gameCompleted ? '#3366cc' : (gameStatus === 'running' ? '#cc3333' : 'green'),
+          backgroundColor: isLeaderboardMode 
+            ? (gameCompleted ? '#1e4d8c' : (gameStatus === 'running' ? '#cc3333' : '#005500')) 
+            : (gameCompleted ? '#3366cc' : (gameStatus === 'running' ? '#cc3333' : 'green')),
           padding: '10px 15px',
           fontSize: '16px',
+          border: isLeaderboardMode ? '2px solid gold' : 'none',
+          boxShadow: isLeaderboardMode ? '0 0 5px rgba(255,215,0,0.5)' : 'none'
         }}
       >
         {gameCompleted ? 'New Game' : (gameStatus === 'running' ? 'Stop Game' : 'Start Game')}
+        {isLeaderboardMode && gameStatus !== 'running' && !gameCompleted && ' (Official)'}
       </button>
     </div>
   );

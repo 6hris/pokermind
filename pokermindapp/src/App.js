@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import SetupPanel from './components/SetupPanel';
 import PokerTable from './components/PokerTable';
 import MessageLog from './components/MessageLog';
+import LeaderboardView from './components/leaderboard/LeaderboardView';
 import './App.css';
 
 function App() {
@@ -11,6 +12,19 @@ function App() {
   const [startingAmount, setStartingAmount] = useState('1000');
   const [playAgainstLLMs, setPlayAgainstLLMs] = useState(false);
   const [gameSpeed, setGameSpeed] = useState('medium');
+  
+  // View navigation
+  const [activeView, setActiveView] = useState('game'); // 'game' or 'leaderboard'
+  
+  // Leaderboard mode state
+  const [isLeaderboardMode, setIsLeaderboardMode] = useState(false);
+  
+  // Store the original values when switching to leaderboard mode
+  const [savedSettings, setSavedSettings] = useState({
+    rounds: '',
+    startingAmount: '',
+    gameSpeed: ''
+  });
 
   // NEW: Store the array of selected models in the parent
   const [modelsInGame, setModelsInGame] = useState([]);
@@ -78,7 +92,10 @@ function App() {
     setGameStatus('running');
     
     try {
-      const response = await fetch('http://localhost:8000/games', {
+      // Determine the API endpoint based on leaderboard mode
+      const endpoint = isLeaderboardMode ? 'http://localhost:8000/admin/official-game' : 'http://localhost:8000/games';
+      
+      const response = await fetch(endpoint, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -89,7 +106,7 @@ function App() {
           player_stack: parseInt(startingAmount),
           num_hands: parseInt(rounds),
           game_speed: gameSpeed,
-          is_official: false,
+          is_official: isLeaderboardMode, // Set the official flag based on mode
           llm_players: modelsInGame.map((modelObj, i) => ({
             name: modelObj.name + `-${i + 1}`,
             model: modelObj.name, // Model name for the API (used by leaderboard)
@@ -367,43 +384,68 @@ function App() {
     return () => {
       ws.close();
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [gameId]);
 
   return (
     <div className="App">
       <header>
         <h1>Pokermind</h1>
+        <div className="navigation-tabs">
+          <button 
+            className={`nav-tab ${activeView === 'game' ? 'active' : ''}`}
+            onClick={() => setActiveView('game')}
+          >
+            Game
+          </button>
+          <button 
+            className={`nav-tab ${activeView === 'leaderboard' ? 'active' : ''}`}
+            onClick={() => setActiveView('leaderboard')}
+          >
+            Leaderboard
+          </button>
+        </div>
       </header>
 
       <div className="container">
-        <SetupPanel
-          openRouterKey={openRouterKey}
-          setOpenRouterKey={setOpenRouterKey}
-          rounds={rounds}
-          setRounds={setRounds}
-          startingAmount={startingAmount}
-          setStartingAmount={setStartingAmount}
-          playAgainstLLMs={playAgainstLLMs}
-          setPlayAgainstLLMs={setPlayAgainstLLMs}
-          modelsInGame={modelsInGame}
-          setModelsInGame={setModelsInGame}
-          gameSpeed={gameSpeed}
-          setGameSpeed={setGameSpeed}
-          onStartGame={handleStartGame}
-          gameStatus={gameStatus}
-          gameCompleted={gameCompleted}
-        />
+        {activeView === 'game' ? (
+          <div className="game-view">
+            <SetupPanel
+              openRouterKey={openRouterKey}
+              setOpenRouterKey={setOpenRouterKey}
+              rounds={rounds}
+              setRounds={setRounds}
+              startingAmount={startingAmount}
+              setStartingAmount={setStartingAmount}
+              playAgainstLLMs={playAgainstLLMs}
+              setPlayAgainstLLMs={setPlayAgainstLLMs}
+              modelsInGame={modelsInGame}
+              setModelsInGame={setModelsInGame}
+              gameSpeed={gameSpeed}
+              setGameSpeed={setGameSpeed}
+              onStartGame={handleStartGame}
+              gameStatus={gameStatus}
+              gameCompleted={gameCompleted}
+              isLeaderboardMode={isLeaderboardMode}
+              setIsLeaderboardMode={setIsLeaderboardMode}
+              savedSettings={savedSettings}
+              setSavedSettings={setSavedSettings}
+            />
 
-        <PokerTable
-          models={modelsInGame}
-          userIsPlaying={playAgainstLLMs}
-          playerStates={playerStates}
-          communityCards={communityCards}
-          pot={pot}
-          gameStatus={gameStatus}
-        />
+            <PokerTable
+              models={modelsInGame}
+              userIsPlaying={playAgainstLLMs}
+              playerStates={playerStates}
+              communityCards={communityCards}
+              pot={pot}
+              gameStatus={gameStatus}
+            />
 
-        <MessageLog logs={gameLogs} />
+            <MessageLog logs={gameLogs} />
+          </div>
+        ) : (
+          <LeaderboardView />
+        )}
         
         {/* Winner Popup */}
         {showWinnerPopup && roundWinner && (
