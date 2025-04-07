@@ -89,10 +89,10 @@ function App() {
           player_stack: parseInt(startingAmount),
           num_hands: parseInt(rounds),
           game_speed: gameSpeed,
+          is_official: false,
           llm_players: modelsInGame.map((modelObj, i) => ({
             name: modelObj.name + `-${i + 1}`,
-            model: modelObj.name.toLowerCase(),
-            //api_key: openRouterKey,
+            model: modelObj.name, // Model name for the API (used by leaderboard)
           })),
         }),
       });
@@ -158,7 +158,8 @@ function App() {
                     is_dealer: player.is_dealer,
                     is_sb: player.is_sb,
                     is_bb: player.is_bb,
-                    position: player.position
+                    position: player.position,
+                    chips: player.chips || updated[playerIndex].chips // Use server-provided chips if available
                   };
                 }
               });
@@ -241,6 +242,27 @@ function App() {
             description = winner.description || '';
           }
           
+          // Update player chip counts from the server data
+          if (message.data.players) {
+            setPlayerStates(prev => {
+              const updated = [...prev];
+              
+              message.data.players.forEach(player => {
+                const playerIndex = updated.findIndex(p => p.name === player.name);
+                if (playerIndex >= 0) {
+                  // Update chip count with the final amount from the server
+                  updated[playerIndex] = {
+                    ...updated[playerIndex],
+                    chips: player.chips,
+                  };
+                  console.log(`Updated ${player.name} chips to ${player.chips}`);
+                }
+              });
+              
+              return updated;
+            });
+          }
+          
           setRoundWinner({
             player: winnerName,
             hand: winningHand,
@@ -259,14 +281,15 @@ function App() {
             setPot(0);
             setCommunityCards(''); // Reset community cards
             
-            // Reset all player states for next round
+            // Reset player states for next round but preserve chip counts
             setPlayerStates(prev => {
               return prev.map(player => ({
                 ...player,
                 holeCards: '',  // Clear hole cards
                 lastAction: '', // Clear last action
                 lastBet: 0,     // Reset last bet
-                status: 'active' // Reset folded status to active
+                status: 'active', // Reset folded status to active
+                // chips: player.chips  // Chip counts are already preserved in the spread operator
               }));
             });
           }, 3000); // Show for 3 seconds

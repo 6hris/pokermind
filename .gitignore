@@ -1,5 +1,8 @@
 .env
+backend/.env
 .ipynb_checkpoints/
 __pycache__
 backend/CLAUDE.MD
 CLAUDE.md
+backend/leaderboard.db
+backend/leaderboard.db.bak

@@ -18,8 +18,8 @@ export default function SetupPanel({
   gameStatus,
   gameCompleted
 }) {
-  // Example model names and a light color palette with good contrast for black text
-  const availableModels = ['gpt-4o', 'gpt-3.5', 'CustomModel'];
+  // Model names that are supported by the backend and tracked in the leaderboard
+  const availableModels = ['gpt-4o', 'claude-3-5-sonnet-20240620'];
   const colorPalette = [
     '#FFD6CC', // Light peach
     '#CCE6FF', // Light blue
