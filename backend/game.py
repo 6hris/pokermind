@@ -60,18 +60,55 @@ class Game:
     
     def set_player_positions(self):
         num_players = len(self.players)
+        active_players = [p for p in self.players if p.status != PlayerStatus.OUT]
+        
+        if len(active_players) < 2:
+            return  # Not enough active players to set positions
 
         for player in self.players:
             player.is_dealer = False
             player.is_sb = False
             player.is_bb = False
         
+        # Set dealer
         self.players[self.dealer_pos].is_dealer = True
-        self.players[(self.dealer_pos + 1) % num_players].is_sb = True
-        self.players[(self.dealer_pos + 2) % num_players].is_bb = True
+        
+        # Find SB position (next active player after dealer)
+        sb_pos = (self.dealer_pos + 1) % num_players
+        while self.players[sb_pos].status == PlayerStatus.OUT:
+            sb_pos = (sb_pos + 1) % num_players
+            # Safety check to avoid infinite loops
+            if sb_pos == self.dealer_pos:
+                break
+                
+        self.players[sb_pos].is_sb = True
+        
+        # Find BB position (next active player after SB)
+        bb_pos = (sb_pos + 1) % num_players
+        while self.players[bb_pos].status == PlayerStatus.OUT:
+            bb_pos = (bb_pos + 1) % num_players
+            # Safety check to avoid infinite loops
+            if bb_pos == sb_pos:
+                break
+                
+        self.players[bb_pos].is_bb = True
     
     def rotate_dealer(self):
-        self.dealer_pos = (self.dealer_pos + 1) % len(self.players)
+        num_players = len(self.players)
+        active_players = [p for p in self.players if p.status != PlayerStatus.OUT]
+        
+        if len(active_players) < 2:
+            return  # Not enough active players to rotate
+            
+        # Find next active player to be the dealer
+        next_pos = (self.dealer_pos + 1) % num_players
+        while self.players[next_pos].status == PlayerStatus.OUT:
+            next_pos = (next_pos + 1) % num_players
+            # Safety check to avoid infinite loops
+            if next_pos == self.dealer_pos:
+                break
+                
+        self.dealer_pos = next_pos
         self.set_player_positions()
 
     async def deal_hole_cards(self):
@@ -100,14 +137,39 @@ class Game:
     
     async def post_blinds(self):
         num_players = len(self.players)
-
-        # small blind
-        sb_player = self.players[(self.dealer_pos + 1) % num_players]
+        active_players = [p for p in self.players if p.status == PlayerStatus.ACTIVE]
+        
+        if len(active_players) < 2:
+            # Not enough active players to continue
+            raise ValueError("Not enough active players to continue the game")
+            
+        # Find the next ACTIVE player after dealer for small blind
+        sb_pos = (self.dealer_pos + 1) % num_players
+        attempts = 0
+        # Skip players with OUT status
+        while self.players[sb_pos].status != PlayerStatus.ACTIVE:
+            sb_pos = (sb_pos + 1) % num_players
+            attempts += 1
+            # Safety check to prevent infinite loops
+            if attempts >= num_players:
+                raise ValueError("Could not find an eligible player for small blind")
+            
+        sb_player = self.players[sb_pos]
         sb_bet = sb_player.place_bet(self.sb)
         self.pot += sb_bet
 
-        # big blind
-        bb_player = self.players[(self.dealer_pos + 2) % num_players]
+        # Find the next ACTIVE player after SB for big blind
+        bb_pos = (sb_pos + 1) % num_players
+        attempts = 0
+        # Skip players with OUT status
+        while self.players[bb_pos].status != PlayerStatus.ACTIVE:
+            bb_pos = (bb_pos + 1) % num_players
+            attempts += 1
+            # Safety check to prevent infinite loops
+            if attempts >= num_players:
+                raise ValueError("Could not find an eligible player for big blind")
+            
+        bb_player = self.players[bb_pos]
         bb_bet = bb_player.place_bet(self.bb)
         self.pot += bb_bet
 
@@ -146,7 +208,8 @@ class Game:
         
         for i in range(len(self.players)):
             idx = (start_pos + i) % len(self.players)
-            if self.players[idx].status != PlayerStatus.FOLDED:
+            # Skip both FOLDED and OUT players
+            if self.players[idx].status != PlayerStatus.FOLDED and self.players[idx].status != PlayerStatus.OUT:
                 return idx
         
         return -1 
@@ -159,7 +222,9 @@ class Game:
         
         start_idx = self.get_starting_player_index(round_type)
 
-        if start_idx == -1 or len([p for p in self.players if p.status != PlayerStatus.FOLDED]) <= 1:
+        # Check if we have enough active players (not FOLDED or OUT)
+        active_non_out_players = [p for p in self.players if p.status != PlayerStatus.FOLDED and p.status != PlayerStatus.OUT]
+        if start_idx == -1 or len(active_non_out_players) <= 1:
             return
         
         if round_type != "pre-flop":
@@ -170,7 +235,8 @@ class Game:
         
         num_players = len(self.players)
         while True:
-            active_players = [p for p in self.players if p.status != PlayerStatus.FOLDED]
+            # Filter out both FOLDED and OUT players
+            active_players = [p for p in self.players if p.status != PlayerStatus.FOLDED and p.status != PlayerStatus.OUT]
 
             if len(active_players) <= 1:
                 break
@@ -179,7 +245,7 @@ class Game:
             curr_idx = start_idx
             for _ in range(num_players):
                 player = self.players[curr_idx]
-                if (player.status != PlayerStatus.FOLDED and player.chips > 0 and (player.current_bet < self.current_bet or self.current_bet == 0)):
+                if (player.status != PlayerStatus.FOLDED and player.status != PlayerStatus.OUT and player.chips > 0 and (player.current_bet < self.current_bet or self.current_bet == 0)):
                     if isinstance(player, LLMPlayer):
                         action, amount = await player.choose_action(self.current_bet, self.get_player_context(player))
                     else:
@@ -317,6 +383,13 @@ class Game:
         self.hand_number += 1
         for player in self.players:
             player.reset_for_hand()
+            
+        # Check if we have enough active players to continue
+        active_players = [p for p in self.players if p.status != PlayerStatus.OUT]
+        if len(active_players) < 2:
+            print(f"Not enough active players to continue. Only {len(active_players)} players with chips.")
+            return
+            
         self.community_cards = []
         self.pot = 0
         self.deck.shuffle()
@@ -339,8 +412,12 @@ class Game:
             } for p in self.players]
         })
 
-        await self.post_blinds()
-        await self.deal_hole_cards()
+        try:
+            await self.post_blinds()
+            await self.deal_hole_cards()
+        except ValueError as e:
+            print(f"Error during hand setup: {e}")
+            return  # Skip this hand and move to the next
 
         for player in self.players:
             if player.hand:
@@ -349,7 +426,7 @@ class Game:
         # Pre-flop betting
         self.current_stage = GameStage.PREFLOP
         await self.betting_round("pre-flop")
-        active_players = [p for p in self.players if p.status != PlayerStatus.FOLDED]
+        active_players = [p for p in self.players if p.status != PlayerStatus.FOLDED and p.status != PlayerStatus.OUT]
         if len(active_players) <= 1:
             await self.complete_hand()
             return
@@ -359,7 +436,7 @@ class Game:
         await self.deal_community_cards(3, GameStage.FLOP)
         print(f"\n--- Flop: {format_cards(self.community_cards)} ---")
         await self.betting_round("flop")
-        active_players = [p for p in self.players if p.status != PlayerStatus.FOLDED]
+        active_players = [p for p in self.players if p.status != PlayerStatus.FOLDED and p.status != PlayerStatus.OUT]
         if len(active_players) <= 1:
             await self.complete_hand()
             return
@@ -369,7 +446,7 @@ class Game:
         await self.deal_community_cards(1, GameStage.TURN)
         print(f"\n--- Turn: {format_cards(self.community_cards)} ---")
         await self.betting_round("turn")
-        active_players = [p for p in self.players if p.status != PlayerStatus.FOLDED]
+        active_players = [p for p in self.players if p.status != PlayerStatus.FOLDED and p.status != PlayerStatus.OUT]
         if len(active_players) <= 1:
             await self.complete_hand()
             return
@@ -384,7 +461,7 @@ class Game:
     
     async def complete_hand(self):
         self.current_stage = GameStage.SHOWDOWN
-        active_players = [p for p in self.players if p.status != PlayerStatus.FOLDED]
+        active_players = [p for p in self.players if p.status != PlayerStatus.FOLDED and p.status != PlayerStatus.OUT]
         
         result = {
             "pot": self.pot,

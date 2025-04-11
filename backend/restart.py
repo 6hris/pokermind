@@ -45,7 +45,9 @@ def restart_system():
     # Step 3: Reset the database
     print("Resetting the database...")
     try:
-        subprocess.run(['python', 'reset_db.py', '--auto'], check=True)
+        # Use the correct path for reset_db.py in the backend directory
+        reset_script = os.path.join(current_dir, 'reset_db.py')
+        subprocess.run(['python', reset_script, '--auto'], check=True)
     except subprocess.CalledProcessError as e:
         print(f"Error resetting database: {e}")
         return

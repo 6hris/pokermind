@@ -71,14 +71,26 @@ class GameManager:
             # Anthropic models
             if model_name.startswith("claude"):
                 api_key = os.getenv("ANTHROPIC_API_KEY")
-                # Add provider prefix for litellm if needed
-                #model_name = f"anthropic/{model_name}"
             # OpenAI models
             elif model_name.startswith("gpt"):
                 api_key = os.getenv("OPENAI_API_KEY")
+            # Gemini models
+            elif model_name == "gemini-2.0-flash":
+                api_key = os.getenv("GEMINI_API_KEY")
+                model_name = "gemini/gemini-2.0-flash"
+            # O1 models
+            elif model_name == "o1-mini":
+                api_key = os.getenv("OPENAI_API_KEY")
+            # DeepSeek models
+            elif model_name == "deepseek-chat":
+                api_key = os.getenv("DEEPSEEK_API_KEY")
+                model_name = "deepseek/deepseek-chat"
+            elif model_name == "deepseek-reasoner":
+                api_key = os.getenv("DEEPSEEK_API_KEY")
+                model_name = "deepseek/deepseek-reasoner"
             # Add other providers as needed
             else:
-                # Default to OpenAI
+                # Default to OpenAI for unknown models
                 api_key = os.getenv("OPENAI_API_KEY")
                 
             if not api_key:
