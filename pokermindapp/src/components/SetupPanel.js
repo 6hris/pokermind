@@ -84,13 +84,8 @@ export default function SetupPanel({
 
   // Add a new model (with a color) to the parent array
   const addModel = () => {
-    const maxAIs = playAgainstLLMs ? 5 : 6;
-    if (modelsInGame.length >= maxAIs) {
-      alert(
-        playAgainstLLMs
-          ? 'Cannot add more than 5 AI if the user is playing.'
-          : 'Cannot add more than 6 AI if the user is not playing.'
-      );
+    if (modelsInGame.length >= 6) {
+      alert('Cannot add more than 6 AI models.');
       return;
     }
 
@@ -200,17 +195,6 @@ export default function SetupPanel({
         ))}
       </ul>
 
-      <div className="play-against">
-        <label style={{ opacity: controlsDisabled ? 0.6 : 1 }}>
-          <input
-            type="checkbox"
-            checked={playAgainstLLMs}
-            onChange={() => setPlayAgainstLLMs(!playAgainstLLMs)}
-            disabled={controlsDisabled}
-          />
-          Play against LLMs?
-        </label>
-      </div>
       
       {/* Leaderboard Mode Toggle */}
       <div className="leaderboard-mode" style={{ 

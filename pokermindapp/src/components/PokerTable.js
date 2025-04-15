@@ -114,14 +114,13 @@ const Card = ({ card }) => {
 
 export default function PokerTable({ 
   models, 
-  userIsPlaying, 
   playerStates = [], 
   communityCards = '', 
   pot = 0,
   gameStatus = 'waiting'
 }) {
-  // total players = # models + 1 if user is playing
-  const totalPlayers = userIsPlaying ? models.length + 1 : models.length;
+  // total players = number of models
+  const totalPlayers = models.length;
 
   // Circle geometry - centered in the container
   const centerX = 375;  // half of 750px (container width)
@@ -208,15 +207,14 @@ export default function PokerTable({
 
         {/* Player seats */}
         {seatPositions.map((pos, i) => {
-          // Determine if this is a user seat or AI seat
-          const isUserSeat = userIsPlaying && i === 0;
-          const modelIndex = userIsPlaying ? i - 1 : i;
-          const modelObj = isUserSeat ? { name: 'You', color: '#FFFFCC' } : models[modelIndex]; // Light yellow for user
+          const modelObj = models[i];
           
           if (!modelObj) return null;
           
           // Try to find player state data for this seat
-          const playerName = isUserSeat ? 'You' : modelObj.name + `-${modelIndex + 1}`;
+          // Only add numbers to models if there are multiple of the same type
+          const hasDuplicate = models.filter(m => m.name === modelObj.name).length > 1;
+          const playerName = hasDuplicate ? modelObj.name + `-${i + 1}` : modelObj.name;
           const playerData = playerStates.find(p => p.name === playerName);
           
           // Parse hole cards if available, using improved parsing

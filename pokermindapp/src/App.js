@@ -10,7 +10,7 @@ function App() {
   const [openRouterKey, setOpenRouterKey] = useState('');
   const [rounds, setRounds] = useState('10');
   const [startingAmount, setStartingAmount] = useState('1000');
-  const [playAgainstLLMs, setPlayAgainstLLMs] = useState(false);
+  const [playAgainstLLMs, setPlayAgainstLLMs] = useState(false); // Keep this state but don't use the UI control
   const [gameSpeed, setGameSpeed] = useState('medium');
   
   // View navigation
@@ -109,10 +109,14 @@ function App() {
           num_hands: parseInt(rounds),
           game_speed: gameSpeed,
           is_official: isLeaderboardMode, // Set the official flag based on mode
-          llm_players: modelsInGame.map((modelObj, i) => ({
-            name: modelObj.name + `-${i + 1}`,
-            model: modelObj.name, // Model name for the API (used by leaderboard)
-          })),
+          llm_players: modelsInGame.map((modelObj, i) => {
+            // Only add numbers to models if there are multiple of the same type
+            const hasDuplicate = modelsInGame.filter(m => m.name === modelObj.name).length > 1;
+            return {
+              name: hasDuplicate ? modelObj.name + `-${i + 1}` : modelObj.name,
+              model: modelObj.name, // Model name for the API (used by leaderboard)
+            };
+          }),
         }),
       });
 
@@ -452,7 +456,6 @@ function App() {
 
             <PokerTable
               models={modelsInGame}
-              userIsPlaying={playAgainstLLMs}
               playerStates={playerStates}
               communityCards={communityCards}
               pot={pot}
