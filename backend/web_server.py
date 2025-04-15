@@ -75,7 +75,7 @@ class GameManager:
             elif model_name.startswith("gpt"):
                 api_key = os.getenv("OPENAI_API_KEY")
             # Gemini models
-            elif model_name == "gemini-2.0-flash":
+            elif model_name == "gemini-2.0-flash" or model_name == "gemma-3-4b-it":
                 api_key = os.getenv("GEMINI_API_KEY")
                 model_name = "gemini/gemini-2.0-flash"
             # O1 models

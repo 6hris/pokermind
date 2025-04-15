@@ -23,7 +23,7 @@ export default function SetupPanel({
   setSavedSettings
 }) {
   // Model names that are supported by the backend and tracked in the leaderboard
-  const availableModels = ['gpt-4o', 'claude-3-5-sonnet-20240620', 'gemini-2.0-flash', 'o1-mini', 'deepseek-chat', 'deepseek-reasoner'];
+  const availableModels = ['gpt-4o', 'claude-3-5-sonnet-20240620', 'gemini-2.0-flash', 'o1-mini', 'deepseek-chat', 'deepseek-reasoner', 'gemma-3-4b-it'];
   const colorPalette = [
     '#FFD6CC', // Light peach
     '#CCE6FF', // Light blue
