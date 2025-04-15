@@ -41,6 +41,64 @@
   color: white;
 }
 
+.exhibition-badge {
+  background-color: #0c5460;
+  color: white;
+}
+
+/* Toggle Switch Styling */
+.toggle-container {
+  margin-right: 15px;
+}
+
+.toggle-label {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.toggle-input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.toggle-switch {
+  position: relative;
+  display: inline-block;
+  width: 48px;
+  height: 24px;
+  background-color: #ccc;
+  border-radius: 24px;
+  transition: .4s;
+  margin-right: 10px;
+}
+
+.toggle-switch:before {
+  position: absolute;
+  content: "";
+  height: 18px;
+  width: 18px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  border-radius: 50%;
+  transition: .4s;
+}
+
+.toggle-input:checked + .toggle-switch {
+  background-color: #1e5128;
+}
+
+.toggle-input:checked + .toggle-switch:before {
+  transform: translateX(24px);
+}
+
+.toggle-text {
+  font-size: 14px;
+}
+
 /* Buttons */
 .refresh-button, .view-details-button, .back-button {
   padding: 8px 16px;

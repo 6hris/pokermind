@@ -95,6 +95,8 @@ function App() {
       // Determine the API endpoint based on leaderboard mode
       const endpoint = isLeaderboardMode ? 'http://localhost:8000/admin/official-game' : 'http://localhost:8000/games';
       
+      console.log('Creating game with models:', modelsInGame);
+      
       const response = await fetch(endpoint, {
         method: 'POST',
         headers: {
@@ -114,19 +116,35 @@ function App() {
         }),
       });
 
+      // Check if response was successful before proceeding
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(`Game creation failed: ${errorData.detail || 'Unknown error'}`);
+      }
+
       const data = await response.json();
+      
+      if (!data.game_id) {
+        throw new Error('Game creation response missing game_id');
+      }
+      
       const gameId = data.game_id;
       console.log('Game created:', gameId);
       setGameId(gameId);
 
-      await fetch(`http://localhost:8000/games/${gameId}/start`, {
+      const startResponse = await fetch(`http://localhost:8000/games/${gameId}/start`, {
         method: 'POST',
       });
+      
+      if (!startResponse.ok) {
+        throw new Error(`Failed to start game: ${startResponse.statusText}`);
+      }
 
       console.log(`Game ${gameId} started`);
     } catch (error) {
       console.error('Failed to start game:', error);
       setGameStatus('waiting');
+      alert(`Failed to start game: ${error.message}`);
     }
   };
 

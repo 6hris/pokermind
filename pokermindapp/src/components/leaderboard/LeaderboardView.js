@@ -7,12 +7,13 @@ function LeaderboardView() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedModel, setSelectedModel] = useState(null);
+  const [officialOnly, setOfficialOnly] = useState(true);
   
-  // Fetch leaderboard data - always use official_only=true
+  // Fetch leaderboard data with official/unofficial toggle
   const fetchLeaderboard = async () => {
     setLoading(true);
     try {
-      const response = await fetch(`http://localhost:8000/leaderboard?official_only=true`);
+      const response = await fetch(`http://localhost:8000/leaderboard?official_only=${officialOnly}`);
       if (!response.ok) {
         throw new Error('Failed to fetch leaderboard data');
       }
@@ -27,11 +28,11 @@ function LeaderboardView() {
     }
   };
   
-  // Load leaderboard data on component mount
+  // Load leaderboard data when component mounts or officialOnly changes
   useEffect(() => {
     fetchLeaderboard();
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [officialOnly]);
   
   // Handle viewing a specific model's stats
   const handleViewModelStats = (modelName) => {
@@ -47,7 +48,7 @@ function LeaderboardView() {
     return (
       <ModelStats 
         modelName={selectedModel} 
-        officialOnly={true}
+        officialOnly={officialOnly}
         onBack={handleBackToLeaderboard}
       />
     );
@@ -58,7 +59,23 @@ function LeaderboardView() {
       <div className="leaderboard-header">
         <h2>LLM Poker Leaderboard</h2>
         <div className="leaderboard-controls">
-          <span className="badge official-badge">Official Rankings</span>
+          <div className="toggle-container">
+            <label className="toggle-label">
+              <input
+                type="checkbox"
+                checked={officialOnly}
+                onChange={() => setOfficialOnly(!officialOnly)}
+                className="toggle-input"
+              />
+              <span className="toggle-switch"></span>
+              <span className="toggle-text">{officialOnly ? 'Official Games' : 'All Games'}</span>
+            </label>
+          </div>
+          
+          <span className={`badge ${officialOnly ? 'official-badge' : 'exhibition-badge'}`}>
+            {officialOnly ? 'Official Rankings' : 'Exhibition Games Included'}
+          </span>
+          
           <button 
             onClick={fetchLeaderboard} 
             className="refresh-button"
@@ -131,7 +148,12 @@ function LeaderboardView() {
           <li>Net Profit: Total chips won or lost across all games</li>
           <li>Win %: Percentage of hands won</li>
           <li>BB/100: Big blinds won per 100 hands (standard poker performance metric)</li>
-          <li>Only official games (100+ hands with standardized settings) are included in the rankings</li>
+          <li>
+            {officialOnly 
+              ? 'Only official games (100+ hands with standardized settings) are included in these rankings' 
+              : 'Both official games and exhibition games are included in these rankings'}
+          </li>
+          <li>Use the toggle above to switch between official games only and all games</li>
         </ul>
       </div>
     </div>
