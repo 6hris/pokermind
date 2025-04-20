@@ -7,7 +7,6 @@ import './App.css';
 
 function App() {
   // Basic states
-  const [openRouterKey, setOpenRouterKey] = useState('');
   const [rounds, setRounds] = useState('10');
   const [startingAmount, setStartingAmount] = useState('1000');
   const [playAgainstLLMs, setPlayAgainstLLMs] = useState(false); // Keep this state but don't use the UI control
@@ -433,8 +432,6 @@ function App() {
         {activeView === 'game' ? (
           <div className="game-view">
             <SetupPanel
-              openRouterKey={openRouterKey}
-              setOpenRouterKey={setOpenRouterKey}
               rounds={rounds}
               setRounds={setRounds}
               startingAmount={startingAmount}

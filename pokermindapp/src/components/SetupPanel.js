@@ -2,8 +2,6 @@
 import React, { useState } from 'react';
 
 export default function SetupPanel({
-  openRouterKey,
-  setOpenRouterKey,
   rounds,
   setRounds,
   startingAmount,
@@ -245,15 +243,6 @@ export default function SetupPanel({
       </div>
 
       <div className="input-fields">
-        <label style={{ opacity: controlsDisabled ? 0.6 : 1 }}>Enter OpenRouter Key:</label>
-        <input
-          type="text"
-          value={openRouterKey}
-          onChange={(e) => setOpenRouterKey(e.target.value)}
-          disabled={controlsDisabled}
-          style={{ opacity: controlsDisabled ? 0.6 : 1 }}
-        />
-
         <label style={{ opacity: controlsDisabled ? 0.6 : 1 }}>Rounds:</label>
         <input
           type="number"
