@@ -119,18 +119,43 @@ export default function SetupPanel({
       setSavedSettings({
         rounds,
         startingAmount,
-        gameSpeed
+        gameSpeed,
+        modelsInGame: [...modelsInGame]  // Save current models
       });
       
       // Apply leaderboard default settings
       setRounds(leaderboardDefaults.rounds);
       setStartingAmount(leaderboardDefaults.startingAmount);
       setGameSpeed(leaderboardDefaults.gameSpeed);
+      
+      // Set the official models - one of each available type
+      const officialModels = [
+        'gpt-4o', 
+        'claude-3-5-sonnet-20240620', 
+        'gemini-2.0-flash', 
+        'o1-mini', 
+        'deepseek-chat', 
+        'gemma-3-4b-it'
+      ];
+      
+      // Assign colors from the palette directly to ensure they're all unique
+      // Since we have exactly 6 models and 6 colors, we can just use index
+      const newOfficialModels = [];
+      for (let i = 0; i < officialModels.length; i++) {
+        newOfficialModels.push({
+          name: officialModels[i],
+          color: colorPalette[i]
+        });
+      }
+      
+      // Replace current models with official ones
+      setModelsInGame(newOfficialModels);
     } else {
       // Restore previous settings when disabling leaderboard mode
       if (savedSettings.rounds) setRounds(savedSettings.rounds);
       if (savedSettings.startingAmount) setStartingAmount(savedSettings.startingAmount);
       if (savedSettings.gameSpeed) setGameSpeed(savedSettings.gameSpeed);
+      if (savedSettings.modelsInGame) setModelsInGame(savedSettings.modelsInGame);
     }
     
     setIsLeaderboardMode(isChecked);
@@ -142,9 +167,9 @@ export default function SetupPanel({
         onClick={() => setShowModelDropdown(!showModelDropdown)}
         style={{ 
           marginBottom: '10px',
-          opacity: controlsDisabled ? 0.6 : 1 
+          opacity: (controlsDisabled || isLeaderboardMode) ? 0.6 : 1 
         }}
-        disabled={controlsDisabled}
+        disabled={controlsDisabled || isLeaderboardMode}
       >
         +Add Models
       </button>
@@ -184,14 +209,28 @@ export default function SetupPanel({
             {modelObj.name}{' '}
             <button 
               onClick={() => removeModel(index)}
-              disabled={controlsDisabled}
-              style={{ opacity: controlsDisabled ? 0.6 : 1 }}
+              disabled={controlsDisabled || isLeaderboardMode}
+              style={{ opacity: (controlsDisabled || isLeaderboardMode) ? 0.6 : 1 }}
             >
               Remove
             </button>
           </li>
         ))}
       </ul>
+      
+      {isLeaderboardMode && (
+        <div style={{ 
+          fontSize: '0.8em', 
+          color: '#666', 
+          marginBottom: '10px',
+          textAlign: 'left',
+          padding: '5px 10px',
+          backgroundColor: '#f5f5f5',
+          borderRadius: '5px'
+        }}>
+          <strong>Note:</strong> In leaderboard mode, the official set of models is fixed for fair comparison.
+        </div>
+      )}
 
       
       {/* Leaderboard Mode Toggle */}
